@@ -17,7 +17,7 @@ class RegisterPosition:
     def __call__(self, image):
         image_out = torch.zeros(image.shape, dtype=torch.float32)
         d = self.weight
-        image_out[0, ...] = image[0, ...]
+        image_out[0, ...] = image[0, ...].clone()
         image_out[1, ...] = self._translate_detector(image[1, ...], (d, 0.5 * d))
         image_out[2, ...] = self._translate_detector(image[2, ...], (d, -0.5 * d))
         image_out[3, ...] = self._translate_detector(image[3, ...], (0, -d))
