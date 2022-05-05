@@ -37,7 +37,7 @@ class SAiryscanReader:
 
     def frames(self):
         """Get the number of frames in the CZI file"""
-        return self.dimensions['S'][1]
+        return self.dimensions['T'][1]
 
     def channels(self):
         """Get the number of channels in the CZI file"""
@@ -61,12 +61,12 @@ class SAiryscanReader:
             for channel in self.channels():
                 pass
 
-    def data(self, f=0, c=0):
+    def data(self, t=0, c=0):
         """Extract one frame from the CZI data
 
         Parameters
         ----------
-        f: int
+        t: int
             Frame index
         c: int
             Channel index
@@ -77,5 +77,5 @@ class SAiryscanReader:
         dimension
 
         """
-        img, shp = self.czi.read_image(S=f, C=c)
+        img, shp = self.czi.read_image(T=t, C=c)
         return torch.from_numpy(np.float32(np.squeeze(img))).to(Settings.instance().device)
