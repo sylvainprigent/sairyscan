@@ -14,7 +14,7 @@ from aicspylibczi import CziFile
 from sairyscan.settings import Settings
 
 
-class AiryscanReader:
+class SAiryscanReader:
     """Read a CZI Zeiss raw data
 
     Parameters
@@ -33,16 +33,35 @@ class AiryscanReader:
         pth = Path(filename)
         self.czi = CziFile(pth)
         self.dimensions = self.czi.get_dims_shape()[0]
+        print('dimensions=', self.dimensions)
 
     def frames(self):
         """Get the number of frames in the CZI file"""
         return self.dimensions['S'][1]
 
+    def channels(self):
+        """Get the number of channels in the CZI file"""
+        return self.dimensions['C'][1]
+
     def depth(self):
         """Get the number of slices in the CZI file"""
         return self.dimensions['Z'][1]
 
-    def frame(self, f=0, c=0):
+    def width(self):
+        """Get the number of columns in the CZI file"""
+        return self.dimensions['X'][1]
+
+    def height(self):
+        """Get the number of rows in the CZI file"""
+        return self.dimensions['Y'][1]
+
+    def to_tensor(self):
+        data = np.zeros((self.frames(), ))
+        for frame in self.frames():
+            for channel in self.channels():
+                pass
+
+    def data(self, f=0, c=0):
         """Extract one frame from the CZI data
 
         Parameters
