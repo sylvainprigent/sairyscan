@@ -1,8 +1,10 @@
 import torch
+from .interface import SAiryscanReconstruction
 
 
-class PseudoConfocal:
+class PseudoConfocal(SAiryscanReconstruction):
     def __init__(self, pinhole=1):
+        super().__init__()
         self.pinhole = pinhole
         if pinhole not in [0.6, 1, 1.25]:
             raise ValueError('PseudoConfocal pinhole parameter must be a value in (0.6, 1, 1.25)')
@@ -12,12 +14,12 @@ class PseudoConfocal:
 
         Parameters
         ----------
-        image: ndarray
+        image: Tensor
             Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images
 
         Returns
         -------
-        ndarray: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
+        Tensor: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
 
         """
         if self.pinhole == 0.6:

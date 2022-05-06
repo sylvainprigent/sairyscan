@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from aicspylibczi import CziFile
-from sairyscan.settings import Settings
+from .settings import Settings
 
 
 class SAiryscanReader:
@@ -33,6 +33,7 @@ class SAiryscanReader:
         pth = Path(filename)
         self.czi = CziFile(pth)
         self.dimensions = self.czi.get_dims_shape()[0]
+        print('pixel type=', self.czi.pixel_type)
         print('dimensions=', self.dimensions)
 
     def frames(self):

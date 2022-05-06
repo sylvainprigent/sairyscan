@@ -1,17 +1,19 @@
 import torch
 import torchvision.transforms as transforms
+from .interface import SairyscanRegistration
 
 
-class RegisterPosition:
+class SRegisterPosition(SairyscanRegistration):
     """Register the detectors stack by translating each image to the detector position is array
 
     Parameters
     ----------
     weight: int
-        Weight on the detector position distance
+        Weight applied on the detector position translation
 
     """
     def __init__(self, weight=1.0):
+        super().__init__()
         self.weight = weight
 
     def __call__(self, image):
