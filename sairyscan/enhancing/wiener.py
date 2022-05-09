@@ -17,14 +17,14 @@ class SAiryscanWiener(SAiryscanEnhancing):
         self.beta = beta
 
     def __call__(self, image):
-        if image.ndims == 2:
+        if image.ndim == 2:
             fft_source = torch.fft.fft2(image)
             psf_roll = torch.roll(self.psf, int(-self.psf.shape[0] / 2), dims=0)
             psf_roll = torch.roll(psf_roll, int(-self.psf.shape[1] / 2), dims=1)
             fft_psf = torch.fft.fft2(psf_roll)
             return torch.real(torch.fft.ifft2(fft_source * torch.conj(fft_psf) / (
-                self.beta * fft_source * torch.conj(fft_source) + fft_psf * torch.conj(fft_psf))))
-        elif image.ndims == 3:
+                 self.beta**2 + fft_psf * torch.conj(fft_psf))))
+        elif image.ndim == 3:
             fft_source = torch.fft.fftn(image)
             psf_roll = torch.roll(self.psf, int(-self.psf.shape[0] / 2), dims=0)
             psf_roll = torch.roll(psf_roll, int(-self.psf.shape[1] / 2), dims=1)
