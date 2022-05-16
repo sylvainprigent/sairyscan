@@ -6,7 +6,6 @@ from sairyscan.core import SAiryscanPipeline, SAiryscanLoop
 
 class SAiryscanAPI:
     def __init__(self):
-        # Filters factory
         self.filters = SAiryscanModuleFactory()
         discovered_modules = self._find_modules()
         for name in discovered_modules:
@@ -23,7 +22,7 @@ class SAiryscanAPI:
         for parent in ['enhancing', 'reconstruction', 'registration']:
             path_ = os.path.join(path, parent)
             for x in os.listdir(path_):
-                if x.endswith("wiener.py") and 'interface' not in x and '__init__' not in x:
+                if x.endswith(".py") and 'interface' not in x and '__init__' not in x and not x.startswith("_"):
                     modules.append(f"sairyscan.{parent}.{x.split('.')[0]}")
         return modules
 

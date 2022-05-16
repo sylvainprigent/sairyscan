@@ -19,9 +19,8 @@ class SAiryscanRichardsonLucy(SAiryscanEnhancing):
 
     def __call__(self, image):
         if image.ndim == 2:
-            fft_source = torch.fft.fft2(image)
-            psf_roll = torch.roll(self.psf, [int(-self.psf.shape[0]/2), int(-self.psf.shape[1]/2)], dims=(0, 1))
-            # psf_roll = torch.roll(psf_roll, int(-self.psf.shape[1] / 2), dims=1)
+            psf_roll = torch.roll(self.psf, [int(-self.psf.shape[0]/2),
+                                             int(-self.psf.shape[1]/2)], dims=(0, 1))
             fft_psf = torch.fft.fft2(psf_roll)
 
             fft_psf_mirror = torch.fft.fft2(torch.flip(psf_roll, dims=[0, 1]))
@@ -35,9 +34,29 @@ class SAiryscanRichardsonLucy(SAiryscanEnhancing):
                 fft_tmp = torch.fft.fft2(tmp)
                 fft_tmp = fft_tmp * fft_psf_mirror
                 tmp = torch.real(torch.fft.ifft2(fft_tmp))
-                print('tmp type=', tmp.dtype)
                 out_image = out_image * tmp
             return out_image
 
         elif image.ndim == 3:
             raise NotImplementedError('Richardson Lucy 3D deconvolution is not yet implemented')
+
+
+metadata = {
+    'name': 'SAiryscanRichardsonLucy',
+    'class': SAiryscanRichardsonLucy,
+    'parameters': {
+        'psf': {
+            'type': torch.Tensor,
+            'label': 'psf',
+            'help': 'Point Spread Function',
+            'default': None
+        },
+        'beta': {
+            'type': int,
+            'label': 'niter',
+            'help': 'Number of iterations',
+            'default': 30,
+            'range': (0, 999999)
+        }
+    }
+}

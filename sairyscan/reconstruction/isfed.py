@@ -24,3 +24,17 @@ class ISFED(SAiryscanReconstruction):
         """
         out = torch.sum(reg_image, axis=0) - self.epsilon *torch.sum(image, axis=0)
         return torch.nn.functional.relu(out, inplace=True)
+
+
+metadata = {
+    'name': 'ISFED',
+    'class': ISFED,
+    'parameters': {
+        'epsilon': {
+            'type': float,
+            'label': 'epsilon',
+            'help': 'Weighting parameter',
+            'default': 0.3
+        }
+    }
+}

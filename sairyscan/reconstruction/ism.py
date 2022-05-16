@@ -21,3 +21,10 @@ class ISM(SAiryscanReconstruction):
         """
         return torch.sum(image, axis=0)
 
+
+metadata = {
+    'name': 'ISM',
+    'class': ISM,
+    'parameters': {
+        }
+}

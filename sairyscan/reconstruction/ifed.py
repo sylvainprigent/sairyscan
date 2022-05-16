@@ -26,3 +26,23 @@ class IFED(SAiryscanReconstruction):
         out = torch.sum(image[0:self.inner_ring_index, ...], axis=0) - self.epsilon * torch.sum(
             image[self.inner_ring_index + 1:32, ...], axis=0)
         return torch.nn.functional.relu(out, inplace=True)
+
+
+metadata = {
+    'name': 'IFED',
+    'class': IFED,
+    'parameters': {
+        'inner_ring_index': {
+            'type': int,
+            'label': 'Inner index',
+            'help': 'Index of the inner ring last detector (7, 19)',
+            'default': 7
+        },
+        'epsilon': {
+            'type': float,
+            'label': 'epsilon',
+            'help': 'Weighting parameter',
+            'default': 0.3
+        }
+    }
+}

@@ -28,3 +28,17 @@ class PseudoConfocal(SAiryscanReconstruction):
             return torch.sum(image[0:19, ...], axis=0)
         elif self.pinhole == 1.25:
             return torch.sum(image[0:32, ...], axis=0)
+
+
+metadata = {
+    'name': 'PseudoConfocal',
+    'class': PseudoConfocal,
+    'parameters': {
+        'pinhole': {
+            'type': float,
+            'label': 'Pinhole',
+            'help': 'Size of the pinhole (0.6, 1, 1.25)',
+            'default': 0.6
+        }
+    }
+}

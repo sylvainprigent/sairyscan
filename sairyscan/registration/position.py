@@ -73,3 +73,17 @@ class SRegisterPosition(SairyscanRegistration):
                                                shear=[0, 0],
                                                interpolation=transforms.functional.InterpolationMode.BILINEAR)
         return img_out.view(img.shape)
+
+
+metadata = {
+    'name': 'SRegisterPosition',
+    'class': SRegisterPosition,
+    'parameters': {
+        'weight': {
+            'type': int,
+            'label': 'weight',
+            'help': 'Translation weight',
+            'default': 1
+        }
+    }
+}
