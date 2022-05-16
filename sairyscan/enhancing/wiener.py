@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 from .interface import SAiryscanEnhancing
 
@@ -32,3 +33,24 @@ class SAiryscanWiener(SAiryscanEnhancing):
             fft_psf = torch.fft.fftn(psf_roll)
             return torch.real(torch.fft.ifftn(fft_source * torch.conj(fft_psf) / (
                 self.beta * fft_source * torch.conj(fft_source) + fft_psf * torch.conj(fft_psf))))
+
+
+metadata = {
+    'name': 'SAiryscanWiener',
+    'class': SAiryscanWiener,
+    'parameters': {
+        'psf': {
+            'type': torch.Tensor,
+            'label': 'psf',
+            'help': 'Point Spread Function',
+            'default': None
+        },
+        'beta': {
+            'type': float,
+            'label': 'Beta',
+            'help': 'Regularisation parameter',
+            'default': 1e-5,
+            'range': (0, 999999)
+        }
+    }
+}
