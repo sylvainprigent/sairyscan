@@ -45,4 +45,4 @@ class PSFGaussian:
                                                       - pow(z-z0, 2) * sigma_z2)
         else:
             raise Exception('PSFGaussian: can generate only 2D or 3D PSFs')
-        return torch.Tensor(self.psf_)
+        return torch.Tensor(self.psf_/np.sum(self.psf_))
