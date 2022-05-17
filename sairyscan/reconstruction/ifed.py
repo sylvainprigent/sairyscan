@@ -1,5 +1,6 @@
 import torch
 from .interface import SAiryscanReconstruction
+from ._sure import SureMap
 
 
 class IFED(SAiryscanReconstruction):
@@ -23,8 +24,20 @@ class IFED(SAiryscanReconstruction):
         Tensor: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
 
         """
-        out = torch.sum(image[0:self.inner_ring_index, ...], axis=0) - self.epsilon * torch.sum(
-            image[self.inner_ring_index + 1:32, ...], axis=0)
+        a = torch.sum(image[0:self.inner_ring_index, ...], axis=0)
+        b = torch.sum(image[self.inner_ring_index + 1:32, ...], axis=0)
+
+        if self.epsilon == 'map':
+            map_ = SureMap(smooth=True)
+            epsilon = map_(image[0, ...], a, b)
+            print('epsilon map=', epsilon.shape)
+        elif self.epsilon == 'mode':
+            map_ = SureMap(smooth=False)
+            epsilon = map_.mode(image[0, ...], a, b)
+            print('mode epsilon=', epsilon)
+        else:
+            epsilon = self.epsilon
+        out = a - epsilon * b
         return torch.nn.functional.relu(out, inplace=True)
 
 
