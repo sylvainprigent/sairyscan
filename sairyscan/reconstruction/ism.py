@@ -5,6 +5,7 @@ from .interface import SAiryscanReconstruction
 class ISM(SAiryscanReconstruction):
     def __init__(self):
         super().__init__()
+        self.num_args = 1
 
     def __call__(self, image):
         """Reconstruct the ISM image from raw airyscan data

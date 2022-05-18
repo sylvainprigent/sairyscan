@@ -34,7 +34,7 @@ class SAiryscanPipeline:
         """
         if self.registration:
             reg_image = self.registration(image)
-            if self.reconstruction.__code__.co_argcount == 2:
+            if self.reconstruction.num_args == 2:
                 rec_image = self.reconstruction(image, reg_image)
             else:
                 rec_image = self.reconstruction(reg_image)

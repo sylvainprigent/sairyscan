@@ -80,10 +80,11 @@ metadata = {
     'class': SRegisterPosition,
     'parameters': {
         'weight': {
-            'type': int,
+            'type': float,
             'label': 'weight',
             'help': 'Translation weight',
-            'default': 1
+            'default': 1,
+            'range': [-10, 10]
         }
     }
 }

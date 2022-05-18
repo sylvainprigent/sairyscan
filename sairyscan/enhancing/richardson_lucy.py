@@ -1,6 +1,5 @@
 import torch
 from .interface import SAiryscanEnhancing
-import matplotlib.pyplot as plt
 
 
 class SAiryscanRichardsonLucy(SAiryscanEnhancing):

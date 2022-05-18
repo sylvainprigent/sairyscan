@@ -1,7 +1,7 @@
 import os
 import importlib
 from .factory import SAiryscanModuleFactory
-from sairyscan.core import SAiryscanPipeline, SAiryscanLoop
+from sairyscan.core import SAiryscanReader, SAiryscanPipeline, SAiryscanLoop
 
 
 class SAiryscanAPI:
@@ -9,9 +9,9 @@ class SAiryscanAPI:
         self.filters = SAiryscanModuleFactory()
         discovered_modules = self._find_modules()
         for name in discovered_modules:
-            print('register the module:', name)
+            # print('register the module:', name)
             mod = importlib.import_module(name)
-            print(mod.__name__)
+            # print(mod.__name__)
             self.filters.register(mod.metadata['name'], mod.metadata)
 
     @staticmethod
@@ -28,6 +28,10 @@ class SAiryscanAPI:
 
     def filter(self, name, **args):
         return self.filters.get(name, **args)
+
+    @staticmethod
+    def reader(filename):
+        return SAiryscanReader(filename)
 
     @staticmethod
     def pipeline(reconstruction, registration=None, enhancing=None):

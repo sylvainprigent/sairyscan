@@ -22,6 +22,9 @@ class SAiryscanModuleFactory:
         """
         self._data[key] = metadata
 
+    def get_parameters(self, key):
+        return self._data[key]['parameters']
+
     def get_keys(self):
         """Get the names of all the registered modules
 
