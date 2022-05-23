@@ -5,12 +5,13 @@ Classes
 SAiryscanRegistration
 
 """
+from sairyscan.core import SObservable
 
 
-class SAiryscanEnhancing:
+class SAiryscanEnhancing(SObservable):
     """Interface for Airyscan enhancing filter applied after the reconstruction"""
     def __init__(self):
-        pass
+        super().__init__()
 
     def __call__(self, image):
         """Do the enhancing

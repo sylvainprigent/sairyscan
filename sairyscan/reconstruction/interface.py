@@ -5,12 +5,13 @@ Classes
 SairyscanReconstruction
 
 """
+from sairyscan.core import SObservable
 
 
-class SAiryscanReconstruction:
+class SAiryscanReconstruction(SObservable):
     """Interface for Airyscan high resolution image reconstruction method"""
     def __init__(self):
-        pass
+        super().__init__()
 
     def __call__(self, *args):
         """Do the reconstruction

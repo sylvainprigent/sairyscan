@@ -27,6 +27,7 @@ class SAiryscanGaussian(SAiryscanEnhancing):
 
 metadata = {
     'name': 'SAiryscanGaussian',
+    'label': 'Gaussian Filter',
     'class': SAiryscanGaussian,
     'parameters': {
         'sigma': {

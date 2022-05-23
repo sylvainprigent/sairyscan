@@ -5,12 +5,13 @@ Classes
 SairyscanRegistration
 
 """
+from sairyscan.core import SObservable
 
 
-class SairyscanRegistration:
+class SairyscanRegistration(SObservable):
     """Interface for Airyscan detectors registration method"""
     def __init__(self):
-        pass
+        super().__init__()
 
     def __call__(self, image):
         """Do the registration

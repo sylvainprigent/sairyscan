@@ -6,6 +6,7 @@ from ._sure import SureMap
 class ISFED(SAiryscanReconstruction):
     def __init__(self, epsilon=0.3):
         super().__init__()
+        self.num_args = 2
         self.epsilon = epsilon
 
     def __call__(self, image, reg_image):
@@ -42,10 +43,11 @@ class ISFED(SAiryscanReconstruction):
 
 metadata = {
     'name': 'ISFED',
+    'label': 'ISFED',
     'class': ISFED,
     'parameters': {
         'epsilon': {
-            'type': float,
+            'type': str,
             'label': 'epsilon',
             'help': 'Weighting parameter',
             'default': 0.3

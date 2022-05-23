@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 
 
@@ -80,17 +81,25 @@ class SAiryscanModuleBuilder:
     def _get_arg(self, param_metadata, key, args):
         type_ = param_metadata['type']
         print('param metadata:', param_metadata)
+        range_ = None
+        if 'range' in param_metadata:
+            range_ = param_metadata['range']
+
         if type_ is float:
             return self.get_arg_float(args, key, param_metadata['default'],
-                                      param_metadata['range'])
+                                      range_)
         elif type_ is int:
             return self.get_arg_int(args, key, param_metadata['default'],
-                                    param_metadata['range'])
+                                    range_)
         elif type_ is bool:
             return self.get_arg_bool(args, key, param_metadata['default'],
-                                     param_metadata['range'])
+                                     range_)
+        elif type_ is str:
+            return self.get_arg_str(args, key, param_metadata['default'])
         elif type_ is torch.Tensor:
             return self.get_arg_array(args, key, param_metadata['default'])
+        elif type_ == 'select':
+            return self.get_arg_select(args, key, param_metadata['values'])
 
     @staticmethod
     def _error_message(key, value_type, value_range):
@@ -260,8 +269,19 @@ class SAiryscanModuleBuilder:
         """
         value = default_value
         if isinstance(args, dict) and key in args:
+            print('psf type=', type(args[key]))
             if type(args[key]) is torch.Tensor:
                 value = args[key]
+            elif type(args[key]) is np.array:
+                value = torch.Tensor(args[key])
             else:
                 raise SAiryscanFactoryError(self._error_message(key, 'array', None))
         return value
+
+    def get_arg_select(self, args, key, values):
+        if isinstance(args, dict) and key in args:
+            value = str(args[key])
+            for x in values:
+                if str(x) == value:
+                    return x
+        raise SAiryscanFactoryError(self._error_message(key, 'select', None))

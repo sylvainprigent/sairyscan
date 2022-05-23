@@ -77,6 +77,7 @@ class SRegisterPosition(SairyscanRegistration):
 
 metadata = {
     'name': 'SRegisterPosition',
+    'label': 'Detector position',
     'class': SRegisterPosition,
     'parameters': {
         'weight': {

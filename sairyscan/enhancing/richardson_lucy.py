@@ -42,6 +42,7 @@ class SAiryscanRichardsonLucy(SAiryscanEnhancing):
 
 metadata = {
     'name': 'SAiryscanRichardsonLucy',
+    'label': 'Richardson-Lucy',
     'class': SAiryscanRichardsonLucy,
     'parameters': {
         'psf': {

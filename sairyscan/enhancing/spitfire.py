@@ -110,6 +110,7 @@ class Spitfire(SAiryscanEnhancing):
 
 metadata = {
     'name': 'Spitfire',
+    'label': 'Spitfire',
     'class': Spitfire,
     'parameters': {
         'psf': {

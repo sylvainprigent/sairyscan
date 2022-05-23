@@ -70,6 +70,7 @@ class SpitfireReconstruction(SAiryscanReconstruction):
 
     def __init__(self, psf, weight=0.6, reg=0.5, detector_weights='mean'):
         super().__init__()
+        self.num_args = 1
         self.psf = psf
         self.weight = weight
         self.reg = reg
@@ -152,6 +153,7 @@ class SpitfireReconstruction(SAiryscanReconstruction):
 
 metadata = {
     'name': 'SpitfireReconstruction',
+    'label': 'Spitfire',
     'class': SpitfireReconstruction,
     'parameters': {
         'psf': {

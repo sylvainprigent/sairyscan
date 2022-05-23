@@ -20,11 +20,15 @@ class ISM(SAiryscanReconstruction):
         Tensor: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
 
         """
-        return torch.sum(image, axis=0)
+        self.progress(0)
+        out = torch.sum(image, axis=0)
+        self.progress(100)
+        return out
 
 
 metadata = {
     'name': 'ISM',
+    'label': 'ISM',
     'class': ISM,
     'parameters': {
         }

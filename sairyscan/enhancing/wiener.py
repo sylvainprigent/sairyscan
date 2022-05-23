@@ -17,11 +17,20 @@ class SAiryscanWiener(SAiryscanEnhancing):
         self.psf = psf
         self.beta = beta
 
+    @staticmethod
+    def _resize_psf(image, psf):
+        kernel = torch.zeros(image.shape)
+        x_start = int(image.shape[0] / 2 - psf.shape[0] / 2) + 1
+        y_start = int(image.shape[1] / 2 - psf.shape[1] / 2) + 1
+        kernel[x_start:x_start+psf.shape[0], y_start:y_start+psf.shape[1]] = psf
+        return kernel
+
     def __call__(self, image):
         if image.ndim == 2:
             fft_source = torch.fft.fft2(image)
-            psf_roll = torch.roll(self.psf, int(-self.psf.shape[0] / 2), dims=0)
-            psf_roll = torch.roll(psf_roll, int(-self.psf.shape[1] / 2), dims=1)
+            psf = self._resize_psf(image, self.psf)
+            psf_roll = torch.roll(psf, int(-psf.shape[0] / 2), dims=0)
+            psf_roll = torch.roll(psf_roll, int(-psf.shape[1] / 2), dims=1)
             fft_psf = torch.fft.fft2(psf_roll)
             return torch.real(torch.fft.ifft2(fft_source * torch.conj(fft_psf) / (
                  self.beta**2 + fft_psf * torch.conj(fft_psf))))
@@ -37,6 +46,7 @@ class SAiryscanWiener(SAiryscanEnhancing):
 
 metadata = {
     'name': 'SAiryscanWiener',
+    'label': 'Wiener',
     'class': SAiryscanWiener,
     'parameters': {
         'psf': {

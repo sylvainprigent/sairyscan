@@ -121,6 +121,7 @@ def calculate_weights(image):
 class SSpitfireFlow(SAiryscanReconstruction):
     def __init__(self, weight=0.6, reg=0.5):
         super().__init__()
+        self.num_args = 1
         self.weight = weight
         self.reg = reg
         self.niter_ = 0
@@ -181,6 +182,7 @@ class SSpitfireFlow(SAiryscanReconstruction):
 
 metadata = {
     'name': 'SSpitfireFlow',
+    'label': 'Spitfire Flow',
     'class': SSpitfireFlow,
     'parameters': {
         'weight': {

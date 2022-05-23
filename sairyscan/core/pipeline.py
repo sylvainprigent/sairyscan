@@ -1,8 +1,9 @@
 import torch
 from .io import SAiryscanReader
+from ._observers import SObservable
 
 
-class SAiryscanPipeline:
+class SAiryscanPipeline(SObservable):
     """Run a reconstruction pipeline in a single image
 
     Parameters
@@ -15,9 +16,14 @@ class SAiryscanPipeline:
 
     """
     def __init__(self, reconstruction, registration=None, enhancing=None):
+        super().__init__()
         self.reconstruction = reconstruction
         self.registration = registration
         self.enhancing = enhancing
+
+    def _transmit_observers(self, object):
+        for observer in self._observers:
+            object.add_observer(observer)
 
     def __call__(self, image):
         """Run the pipeline
@@ -32,7 +38,9 @@ class SAiryscanPipeline:
         ndarray: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
 
         """
+        self._transmit_observers(self.reconstruction)
         if self.registration:
+            self._transmit_observers(self.registration)
             reg_image = self.registration(image)
             if self.reconstruction.num_args == 2:
                 rec_image = self.reconstruction(image, reg_image)
@@ -42,15 +50,17 @@ class SAiryscanPipeline:
             rec_image = self.reconstruction(image)
 
         if self.enhancing:
+            self._transmit_observers(self.enhancing)
             return self.enhancing(rec_image)
         return rec_image
 
 
-class SAiryscanLoop:
+class SAiryscanLoop(SObservable):
     """Apply a SAiryscan reconstruction method on all the frames and channels
 
     """
     def __init__(self, filename, to_file=False, destination_filename=''):
+        super().__init__()
         self.filename = filename
         self.to_file = to_file
         self.destination_filename = destination_filename

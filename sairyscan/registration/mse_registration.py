@@ -20,12 +20,14 @@ class SRegisterMSE(SairyscanRegistration):
         self.weight = weight
 
     def __call__(self, image):
+        self.progress(0)
         image_out = torch.zeros(image.shape, dtype=torch.float32)
         image_out[0, ...] = image[0, ...].clone()
 
         ref_image = rescale(image[0, ...].detach().numpy(), 2)
         # ref_image = ref_image/np.max(ref_image)
         for d in range(1, 32):
+            self.progress(int(100*d/32))
             mse = np.zeros((13, 13))
             mov_image_ref = rescale(image[d, ...].detach().numpy(), 2)
             # mov_image_ref = mov_image_ref/np.max(mov_image_ref)
@@ -37,9 +39,11 @@ class SRegisterMSE(SairyscanRegistration):
                                              mov_image[10:-10, 10:-10])**2)
             min_pos = np.where(mse == np.min(mse))
             shift = ((min_pos[1][0]-5)/2, (min_pos[0][0]-5)/2)
+            self.notify(f'shift {d} = ({shift[0]}, {shift[1]})')
             print(f'shift {d} =', shift)
             image_out[d, ...] = self._translate_detector(image[d, ...],
                                                          (shift[0] / 2, shift[1] / 2))
+            self.progress(100)
         return image_out
 
     @staticmethod
@@ -66,6 +70,7 @@ class SRegisterMSE(SairyscanRegistration):
 
 metadata = {
     'name': 'SRegisterMSE',
+    'label': 'Translation MSE',
     'class': SRegisterMSE,
     'parameters': {
     }
