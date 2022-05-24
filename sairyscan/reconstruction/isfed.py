@@ -38,7 +38,7 @@ class ISFED(SAiryscanReconstruction):
         else:
             epsilon = self.epsilon
         out = a - epsilon * b
-        return torch.nn.functional.relu(out, inplace=True)
+        return self._crop(torch.nn.functional.relu(out, inplace=True))
 
 
 metadata = {

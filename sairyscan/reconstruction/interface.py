@@ -29,3 +29,11 @@ class SAiryscanReconstruction(SObservable):
         """
         raise NotImplementedError('SairyscanReconstruction is an interface. Please implement the'
                                   ' __call__ method')
+
+    @staticmethod
+    def _crop(image):
+        """Crop the image by 5 pixels to avoid side artifacts"""
+        if image.ndim == 2:
+            return image[5:-5, 5:-5]
+        else:
+            return image[5:-5, 5:-5, :]

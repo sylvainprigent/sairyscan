@@ -27,6 +27,8 @@ class SAiryscanAPI:
         return modules
 
     def filter(self, name, **args):
+        if name == 'None':
+            return None
         return self.filters.get(name, **args)
 
     @staticmethod

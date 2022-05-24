@@ -3,7 +3,7 @@ from .ifed import IFED
 from .isfed import ISFED
 from .ism import ISM
 from .pseudo_confocal import PseudoConfocal
-from .spitfire import SpitfireReconstruction
+from .spitfire_join_deconv import SpitfireJoinDeconv
 from .spitfire_flow import SSpitfireFlow
 from ._sure import SureMap
 
@@ -13,7 +13,7 @@ __all__ = ['SAiryscanReconstruction',
            'ISFED',
            'ISM',
            'PseudoConfocal',
-           'SpitfireReconstruction',
+           'SpitfireJoinDeconv',
            'SSpitfireFlow',
            'SureMap'
            ]

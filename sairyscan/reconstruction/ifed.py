@@ -51,7 +51,7 @@ class IFED(SAiryscanReconstruction):
         self.notify('IFED: do sum and relu')
         out = a - epsilon * b
         self.progress(100)
-        return torch.nn.functional.relu(out, inplace=True)
+        return self._crop(torch.nn.functional.relu(out, inplace=True))
 
 
 metadata = {

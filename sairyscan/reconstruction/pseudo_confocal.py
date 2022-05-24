@@ -32,7 +32,7 @@ class PseudoConfocal(SAiryscanReconstruction):
         elif self.pinhole == 1.25:
             out = torch.sum(image[0:32, ...], axis=0)
         self.progress(100)
-        return out
+        return self._crop(out)
 
 
 metadata = {

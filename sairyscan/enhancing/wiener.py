@@ -27,13 +27,17 @@ class SAiryscanWiener(SAiryscanEnhancing):
 
     def __call__(self, image):
         if image.ndim == 2:
-            fft_source = torch.fft.fft2(image)
-            psf = self._resize_psf(image, self.psf)
+            padding = 13
+            pad_fn = torch.nn.ReflectionPad2d(padding)
+            image_pad = pad_fn(image.detach().clone().view(1, 1, image.shape[0], image.shape[1])).view(
+                (image.shape[0] + 2 * padding, image.shape[1] + 2 * padding))
+            fft_source = torch.fft.fft2(image_pad)
+            psf = self._resize_psf(image_pad, self.psf)
             psf_roll = torch.roll(psf, int(-psf.shape[0] / 2), dims=0)
             psf_roll = torch.roll(psf_roll, int(-psf.shape[1] / 2), dims=1)
             fft_psf = torch.fft.fft2(psf_roll)
             return torch.real(torch.fft.ifft2(fft_source * torch.conj(fft_psf) / (
-                 self.beta**2 + fft_psf * torch.conj(fft_psf))))
+                 self.beta**2 + fft_psf * torch.conj(fft_psf))))[padding:-padding, padding:-padding]
         elif image.ndim == 3:
             fft_source = torch.fft.fftn(image)
             psf_roll = torch.roll(self.psf, int(-self.psf.shape[0] / 2), dims=0)

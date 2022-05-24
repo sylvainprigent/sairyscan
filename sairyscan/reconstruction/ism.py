@@ -23,7 +23,7 @@ class ISM(SAiryscanReconstruction):
         self.progress(0)
         out = torch.sum(image, axis=0)
         self.progress(100)
-        return out
+        return self._crop(out)
 
 
 metadata = {

@@ -177,7 +177,7 @@ class SSpitfireFlow(SAiryscanReconstruction):
             optimizer.step()
             scheduler.step()
         self.loss_ = loss
-        return deconv_image.view(image.shape[3], image.shape[4])
+        return self._crop(deconv_image.view(image.shape[3], image.shape[4]))
 
 
 metadata = {
