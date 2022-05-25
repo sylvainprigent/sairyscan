@@ -28,4 +28,4 @@ def test_spitfire_join_deconv_2d(tmp_path):
     # imsave(os.path.join(root_dir, 'celegans_spitfire_join_deconv.tif'), out_image.detach().numpy())
     ref_image = imread(os.path.join(root_dir, 'celegans_spitfire_join_deconv.tif'))
 
-    np.testing.assert_equal(out_image.detach().numpy(), ref_image)
+    np.testing.assert_almost_equal(out_image.detach().numpy(), ref_image, decimal=5)
