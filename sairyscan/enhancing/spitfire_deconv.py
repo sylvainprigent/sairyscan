@@ -62,7 +62,7 @@ class SpitfireDeconv(SAiryscanEnhancing):
 
     """
 
-    def __init__(self, psf, weight=0.6, reg=0.5):
+    def __init__(self, psf, weight=0.6, reg=0.995):
         super().__init__()
         self.psf = psf
         self.weight = weight
@@ -138,7 +138,7 @@ metadata = {
             'type': float,
             'label': 'Regularization',
             'help': 'Regularization weight. Value is in [0, 1]',
-            'default': 0.5,
+            'default': 0.995,
             'range': (0, 1)
         }
     }
