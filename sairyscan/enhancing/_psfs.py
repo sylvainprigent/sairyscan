@@ -22,8 +22,8 @@ class PSFGaussian:
         """Calculate the PSF image"""
         if len(self.shape) == 2:
             self.psf_ = np.zeros(self.shape)
-            x0 = self.shape[0] / 2
-            y0 = self.shape[1] / 2
+            x0 = math.floor(self.shape[0] / 2)
+            y0 = math.floor(self.shape[1] / 2)
             sigma_x2 = 0.5 / (self.sigma[0] * self.sigma[0])
             sigma_y2 = 0.5 / (self.sigma[1] * self.sigma[1])
             for x in range(self.shape[0]):
