@@ -22,7 +22,7 @@ def test_richardson_lucy_2d(tmp_path):
     filter_ = SAiryscanRichardsonLucy(psf, niter=30)
     out_image = filter_(image)
 
-    #imsave(os.path.join(root_dir, 'celegans_ism_richardson_lucy.tif'), out_image.detach().numpy())
+    # imsave(os.path.join(root_dir, 'celegans_ism_richardson_lucy.tif'), out_image.detach().numpy())
     ref_image = imread(os.path.join(root_dir, 'celegans_ism_richardson_lucy.tif'))
 
     np.testing.assert_equal(out_image.detach().numpy(), ref_image)
