@@ -18,4 +18,4 @@ def test_position_celegans():
     ref_file = os.path.join(dir_path, 'celegans_position.tif')
     image_ref = imread(ref_file)
 
-    np.testing.assert_equal(image_out.detach().numpy(), image_ref)
+    np.testing.assert_almost_equal(image_out.detach().numpy(), image_ref, decimal=1)
