@@ -7,7 +7,7 @@ from sairyscan.enhancing._psfs import PSFGaussian
 
 
 # tmp_path is a pytest fixture
-def test_wiener_2d(tmp_path):
+def test_gaussian_2d(tmp_path):
     """An example of how you might test your plugin."""
 
     psf_generator = PSFGaussian((1.5, 1.5), (15, 15))

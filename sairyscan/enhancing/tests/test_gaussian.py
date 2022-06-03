@@ -7,7 +7,7 @@ from sairyscan.enhancing.gaussian import SAiryscanGaussian
 
 
 # tmp_path is a pytest fixture
-def test_gaussian_2d(tmp_path):
+def test_gaussian_filter_2d(tmp_path):
     """An example of how you might test your plugin."""
 
     root_dir = os.path.dirname(os.path.abspath(__file__))
@@ -21,4 +21,4 @@ def test_gaussian_2d(tmp_path):
     # imsave(os.path.join(root_dir, 'celegans_ism_gaussian.tif'), out_image.detach().numpy())
     ref_image = imread(os.path.join(root_dir, 'celegans_ism_gaussian.tif'))
 
-    np.testing.assert_equal(out_image.detach().numpy(), ref_image)
+    np.testing.assert_almost_equal(out_image.detach().numpy(), ref_image, decimal=3)
