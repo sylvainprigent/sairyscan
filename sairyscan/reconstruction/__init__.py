@@ -1,6 +1,8 @@
 from .interface import SAiryscanReconstruction
 from .ifed import IFED
 from .isfed import ISFED
+from .ifed_denoising import IFEDDenoising
+from .isfed_denoising import ISFEDDenoising
 from .ism import ISM
 from .pseudo_confocal import PseudoConfocal
 from .spitfire_join_deconv import SpitfireJoinDeconv
@@ -15,5 +17,7 @@ __all__ = ['SAiryscanReconstruction',
            'PseudoConfocal',
            'SpitfireJoinDeconv',
            'SSpitfireFlow',
-           'SureMap'
+           'SureMap',
+           'IFEDDenoising',
+           'ISFEDDenoising'
            ]

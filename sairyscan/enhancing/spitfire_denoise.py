@@ -69,7 +69,9 @@ class SpitfireDenoise(SAiryscanEnhancing):
 
     def run_2d(self, image):
         self.progress(0)
-        image = (image-torch.min(image))/(torch.max(image)-torch.min(image))
+        mini = torch.min(image)
+        maxi = torch.max(image)
+        image = (image-mini)/(maxi-mini)
         # pad image
         padding = 13
         pad_fn = torch.nn.ReflectionPad2d(padding)
@@ -101,7 +103,8 @@ class SpitfireDenoise(SAiryscanEnhancing):
             scheduler.step()
         self.loss_ = loss
         self.progress(100)
-        return deconv_image.view(image_pad.shape[2], image_pad.shape[3])[padding:-padding, padding:-padding]
+        out = deconv_image.view(image_pad.shape[2], image_pad.shape[3])[padding:-padding, padding:-padding]
+        return (maxi-mini)*out+mini
 
 
 metadata = {
