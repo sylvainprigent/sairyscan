@@ -1,6 +1,7 @@
 import torch
 from .interface import SAiryscanReconstruction
 from ._sure import SureMap
+from .spitfire_join_denoise import SpitfireJoinDenoise
 from sairyscan.enhancing.spitfire_denoise import SpitfireDenoise
 
 
@@ -21,18 +22,24 @@ class ISFEDDenoising(SAiryscanReconstruction):
         Regularization for denoising of the first term of ISFED reconstruction
     reg_outer: float
         Regularization for the denoising of the second term of the SFED reconstruction
-    weighting: float
-        Weighting parameter of the SPITFIR(e) denoising model. Must be in [0, 1], with value close
-        to 0 for sparse signal and close to one otherwise.
+    weighting_inner: float
+        Weighting parameter of the SPITFIR(e) denoising model for the first term of ISFED. Must be
+        in [0, 1], with value close to 0 for sparse signal and close to one otherwise.
+    weighting_outer: float
+        Weighting parameter of the SPITFIR(e) denoising model for the second term of ISFED. Must be
+        in [0, 1], with value close to 0 for sparse signal and close to one otherwise.
 
     """
-    def __init__(self, epsilon=0.3, reg_inner=0.995, reg_outer=0.995, weighting=0.9):
+    def __init__(self, epsilon=0.3, reg_inner=0.995, reg_outer=0.995, weighting_inner=0.9,
+                 weighting_outer=0.9, join_denoising=False):
         super().__init__()
         self.num_args = 2
         self.epsilon = epsilon
         self.reg_inner = reg_inner
         self.reg_outer = reg_outer
-        self.weighting = weighting
+        self.weighting_inner = weighting_inner
+        self.weighting_outer = weighting_outer
+        self.join_denoising = join_denoising
         self.map_ = None
 
     def __call__(self, image, reg_image):
@@ -50,15 +57,18 @@ class ISFEDDenoising(SAiryscanReconstruction):
         Tensor: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
 
         """
-        a = torch.sum(reg_image, axis=0)
-        b = torch.sum(image, axis=0)
-
-        # denoise a and b
-        self.notify('IFED: denoise rings')
-        den_a_filter = SpitfireDenoise(weight=self.weighting, reg=self.reg_inner)
-        a = den_a_filter(a)
-        den_b_filter = SpitfireDenoise(weight=self.weighting, reg=self.reg_outer)
-        b = den_b_filter(b)
+        if self.join_denoising:
+            den_a_filter = SpitfireJoinDenoise(weight=self.weighting_inner, reg=self.reg_inner)
+            a = 32*den_a_filter(reg_image).detach()
+            den_b_filter = SpitfireJoinDenoise(weight=self.weighting_outer, reg=self.reg_outer)
+            b = 32*den_b_filter(image).detach()
+        else:
+            a = torch.sum(reg_image, axis=0)
+            b = torch.sum(image, axis=0)
+            den_a_filter = SpitfireDenoise(weight=self.weighting_inner, reg=self.reg_inner)
+            a = den_a_filter(a).detach()
+            den_b_filter = SpitfireDenoise(weight=self.weighting_outer, reg=self.reg_outer)
+            b = den_b_filter(b).detach()
 
         if self.epsilon == 'map':
             map_ = SureMap(smooth=False)

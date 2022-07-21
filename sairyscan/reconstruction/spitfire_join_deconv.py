@@ -129,7 +129,6 @@ class SpitfireJoinDeconv(SAiryscanReconstruction):
         count_eq = 0
         self.niter_ = 0
 
-
         for i in range(self.max_iter_):
             self.progress(int(100*i/self.max_iter_))
             self.niter_ += 1

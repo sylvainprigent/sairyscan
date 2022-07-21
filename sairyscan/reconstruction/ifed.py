@@ -32,6 +32,7 @@ class IFED(SAiryscanReconstruction):
         self.notify('IFED: sum inner and outer detectors')
         a = torch.sum(image[0:self.inner_ring_index, ...], axis=0)
         b = torch.sum(image[self.inner_ring_index + 1:32, ...], axis=0)
+
         self.progress(33)
         print('ifed epsilon=', self.epsilon)
         if self.epsilon == 'map':
@@ -46,7 +47,7 @@ class IFED(SAiryscanReconstruction):
             print('mode epsilon=', epsilon)
         else:
             self.notify('IFED: use manual epsilon')
-            epsilon = self.epsilon
+            epsilon = torch.tensor(self.epsilon)
         self.progress(75)
         self.notify('IFED: do sum and relu')
         out = a - epsilon * b
