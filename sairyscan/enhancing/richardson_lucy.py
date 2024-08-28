@@ -33,7 +33,7 @@ class SAiryscanRichardsonLucy(SAiryscanEnhancing):
         """Do the deconvolution
 
         :param image: Image to deblur [Y, X] or [Z, Y, X]
-        :return: THe deblurred image
+        :return: The deblurred image
         """
         if image.ndim == 2:
             padding = 13

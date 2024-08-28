@@ -21,10 +21,12 @@ metadata = [gaussian_metadata,
             ]
 
 
-__all__ = ['SAiryscanEnhancing',
-           'SAiryscanGaussian',
-           'SAiryscanWiener',
-           'SAiryscanRichardsonLucy',
-           'SpitfireDeconv',
-           'metadata'
-           ]
+__all__ = [
+    'PSFGaussian',
+    'SAiryscanEnhancing',
+    'SAiryscanGaussian',
+    'SAiryscanWiener',
+    'SAiryscanRichardsonLucy',
+    'SpitfireDeconv',
+    'metadata'
+]

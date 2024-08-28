@@ -82,10 +82,8 @@ Example data
 Internal patterns
 -----------------
 
-Interfaces are the core of the framework to define modules that store metadata and allows to
-efficiently build training and prediction workflows.
-
-The available interfaces are:
+Internal patterns are light implementations of patterns like observer/observable,
+singleton to read settings, and interface for image file reading.
 
 .. currentmodule:: sairyscan.core
 
