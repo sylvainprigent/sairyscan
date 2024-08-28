@@ -23,7 +23,7 @@ airyscan -i celegans.czi -r "SRegisterPosition" -m ISM -o celegans_ism.tiff
 To build pipeline please refer to the API documentation [guide](https://sylvainprigent.github.io/sairyscan/guide.html)
 
 
-# FOR Development
+# For development
 
 ## Install dev dependencies
 
