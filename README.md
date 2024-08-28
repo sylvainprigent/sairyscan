@@ -1,7 +1,6 @@
 # SAiryscan
 
-SAiryscan is a python proof of concept of the algorithms developed in the publication 
-in [Optic letters](https://opg.optica.org/ol/abstract.cfm?uri=ol-48-2-498&origin=search)
+SAiryscan is a python proof of concept of the algorithms developed in the publication: [Optic letters](https://opg.optica.org/ol/abstract.cfm?uri=ol-48-2-498&origin=search)
 
 
 ![optic_letters](docs/source/images/optic_letters.png "optic_letters")
@@ -10,14 +9,14 @@ The implementation is based on `PyTorch` for it capabilities of using the GPU if
 
 ## Documentation
 
-The documentation is available [here](https://sylvainprigent.github.io/sairyscan/).
+The documentation is available [here](https://sylvainprigent.github.io/sairyscan/about.html).
 
 ## Quick start
 
 The easiest way to use the code without modifications is to use de command line interface:
 
 ```bash
-airyscan -i celegans.czi -r "SRegisterPosition" -m ISM -o celegans_ism.tiff
+airyscan -i celegans.czi -r SRegisterPosition -m ISM -o celegans_ism.tiff
 ```
 
 To build pipeline please refer to the API documentation [guide](https://sylvainprigent.github.io/sairyscan/guide.html)

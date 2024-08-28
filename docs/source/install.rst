@@ -6,7 +6,7 @@ This section contains the instructions to install ``SAiryscan``
 Using pip from PyPI
 -------------------
 
-Releases are available PyPI. We recommend using virtual environment.
+Releases are available in PyPI. We recommend using virtual environment.
 Depending on the GPU and ``PyTorch`` version you are using you may need to install various packages.
 For default local usage:
 
@@ -42,11 +42,3 @@ If you plan to develop ``SAiryscan`` or want to install locally from sources
     git clone https://github.com/sylvainprigent/sairyscan.git
     cd sairyscan
     pip install -e . # or 'pip install -r requirements.txt' for dev dependencies
-
-
-Startup
--------
-
-You are now ready to use ``SAiryscan``
-
-TODO: ADD EXAMPLE CODE HERE TO RUN SAIRYSCAN
