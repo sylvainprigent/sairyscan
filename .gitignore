@@ -9,3 +9,4 @@ runs/
 saved_models/
 data/
 __pycache__
+docs/source/generated/
