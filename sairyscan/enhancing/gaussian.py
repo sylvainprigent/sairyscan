@@ -1,22 +1,27 @@
+"""This module implement image denoising by applying a Gaussian filter"""
+import torch
+from torchvision import transforms
+
 from .interface import SAiryscanEnhancing
-import torchvision.transforms as transforms
 
 
 class SAiryscanGaussian(SAiryscanEnhancing):
     """Apply a gaussian filter
 
-    Parameters
-    ----------
-    sigma: float or list
-        Gaussian sigma in each dimension
-
+    :param sigma: Gaussian sigma in each dimension
+    :param kernel_size: Size of the patch used for the Gaussian support
     """
-    def __init__(self, sigma=0.5, kernel_size=7):
+    def __init__(self, sigma: float | tuple[float, ...] = 0.5, kernel_size: int =7):
         super().__init__()
         self.sigma = sigma
         self.kernel_size = kernel_size
 
-    def __call__(self, image):
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
+        """Run the filtering
+
+        :param image: Image to filter
+        :return: The filtered image
+        """
         out_bc = image.view(1, 1, image.shape[0], image.shape[1])
         out_b = transforms.functional.gaussian_blur(out_bc,
                                                     kernel_size=(self.kernel_size,

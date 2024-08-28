@@ -1,22 +1,25 @@
+"""Implementation of registration with fixed position"""
 import torch
-import torchvision.transforms as transforms
-from .interface import SairyscanRegistration
+from torchvision import transforms
+from .interface import SAiryscanRegistration
 
 
-class SRegisterPosition(SairyscanRegistration):
+class SRegisterPosition(SAiryscanRegistration):
     """Register the detectors stack by translating each image to the detector position is array
 
-    Parameters
-    ----------
-    weight: int
-        Weight applied on the detector position translation
+    :param weight: Weight applied on the detector position translation
 
     """
-    def __init__(self, weight=1.0):
+    def __init__(self, weight: float = 1.0):
         super().__init__()
         self.weight = weight
 
-    def __call__(self, image):
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
+        """Run registration
+
+        :param image: Stack to register
+        :return: The registered stack
+        """
         image_out = torch.zeros(image.shape, dtype=torch.float32)
         d = self.weight
         image_out[0, ...] = image[0, ...].clone()
@@ -54,24 +57,17 @@ class SRegisterPosition(SairyscanRegistration):
         return image_out
 
     @staticmethod
-    def _translate_detector(img, translate):
+    def _translate_detector(img: torch.Tensor, translate: tuple[float, float]):
         """Translate one detector
 
-        Parameters
-        ----------
-        img: Tensor
-            Tensor for one single detector
-        translate: tuple
-            (x, y, z) or (x, y) translation vector
-
-        Returns
-        -------
-        Tensor: the translated tensor
+        :param img: Tensor for one single detector
+        :param translate: (x, y, z) or (x, y) translation vector
+        :return: the translated tensor
         """
         img_bc = img.view((1, 1, img.shape[0], img.shape[1]))
         img_out = transforms.functional.affine(img_bc, angle=0, translate=translate, scale=1,
-                                               shear=[0, 0],
-                                               interpolation=transforms.functional.InterpolationMode.BILINEAR)
+                                    shear=[0, 0],
+                                    interpolation=transforms.functional.InterpolationMode.BILINEAR)
         return img_out.view(img.shape)
 
 

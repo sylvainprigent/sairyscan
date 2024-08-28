@@ -1,34 +1,38 @@
+"""This module implements the IFED with denoising reconstruction method"""
 import torch
+
+from ..enhancing.spitfire_denoise import SpitfireDenoise
+
 from .interface import SAiryscanReconstruction
 from ._sure import SureMap
 from .spitfire_join_denoise import SpitfireJoinDenoise
-from sairyscan.enhancing.spitfire_denoise import SpitfireDenoise
 
 
 class IFEDDenoising(SAiryscanReconstruction):
     """Reconstruct a high resolution image with a ISFED method including a denoising step
 
     The denoising is performed on the two terms of the ISFED image difference using the SPITFIR(e)
-    algorithm
+    algorithm.
 
-    Parameters
-    ----------
-    epsilon: str or float
-        weighting parameter for the ISFED difference second term. If epsilon='map', epsilon is an
-        automatic estimated weight map using the SURE criterion. If epsilon='mode', epsilon is a
-        float which corresponds to the main mode of the SURE map. Otherwise, epsilon can be fixed
-        to any float value
-    reg_inner: float
-        Regularization for denoising of the first term of ISFED reconstruction
-    reg_outer: float
-        Regularization for the denoising of the second term of the SFED reconstruction
-    weighting: float
-        Weighting parameter of the SPITFIR(e) denoising model. Must be in [0, 1], with value close
-        to 0 for sparse signal and close to one otherwise.
+    :param inner_ring_index: Index of the last detector of the inner ring [7, 19],
+    :param epsilon: weighting parameter for the ISFED difference second term. If epsilon='map',
+        epsilon is an automatic estimated weight map using the SURE criterion. If epsilon='mode',
+        epsilon is a float which corresponds to the main mode of the SURE map. Otherwise, epsilon
+        can be fixed to any float value,
+    :param reg_inner: Regularization for denoising of the first term of ISFED reconstruction,
+    :param reg_outer: Regularization for the denoising of the second term of the SFED
+        reconstruction,
+    :param weighting: Weighting parameter of the SPITFIR(e) denoising model. Must be in [0, 1],
+        with value close to 0 for sparse signal and close to one otherwise.
 
     """
-    def __init__(self, inner_ring_index=7, epsilon=0.3, reg_inner=0.995,
-                 reg_outer=0.995, weighting=0.9, join_denoising=False):
+    def __init__(self,
+                 inner_ring_index: int = 7,
+                 epsilon: str | float = 0.3,
+                 reg_inner: float = 0.995,
+                 reg_outer: float = 0.995,
+                 weighting: float = 0.9,
+                 join_denoising: bool = False):
         super().__init__()
 
         print('ifed constructor inner index=', inner_ring_index)
@@ -44,18 +48,11 @@ class IFEDDenoising(SAiryscanReconstruction):
         if inner_ring_index not in [7, 19]:
             raise ValueError('Inner ring index must be in (7, 19)')
 
-    def __call__(self, image):
-        """Reconstruct the IFED image from raw airyscan data
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
+        """Do the reconstruction
 
-        Parameters
-        ----------
-        image: Tensor
-            Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images
-
-        Returns
-        -------
-        Tensor: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
-
+        :param image: Raw detector stack to reconstruct [H (Z) Y X]
+        :return: high resolution image [(Z) Y X]
         """
         self.progress(0)
         self.notify('IFED: sum inner and outer detectors')

@@ -1,3 +1,4 @@
+"""This module implements the generation of Gaussian PSFs"""
 import math
 import numpy as np
 import torch
@@ -5,20 +6,16 @@ import torch
 
 class PSFGaussian:
     """Generate a Gaussian PSF
-    Parameters
-    ----------
-    sigma: tuple
-        Radius of the Gaussian in each dimension
-    shape: tuple
-        Size of the PSF array in each dimension
-    """
 
-    def __init__(self, sigma, shape):
+    :param sigma: Radius of the Gaussian in each dimension
+    :param shape: Size of the PSF array in each dimension
+    """
+    def __init__(self, sigma: tuple[int, ...], shape: tuple[int, ...]):
         self.sigma = sigma
         self.shape = shape
         self.psf_ = None
 
-    def __call__(self):
+    def __call__(self) -> torch.Tensor:
         """Calculate the PSF image"""
         if len(self.shape) == 2:
             self.psf_ = np.zeros(self.shape)
@@ -44,5 +41,5 @@ class PSFGaussian:
                                                       - pow(y-y0, 2) * sigma_y2
                                                       - pow(z-z0, 2) * sigma_z2)
         else:
-            raise Exception('PSFGaussian: can generate only 2D or 3D PSFs')
-        return torch.Tensor(self.psf_/np.sum(self.psf_))
+            raise ValueError('PSFGaussian: can generate only 2D or 3D PSFs')
+        return torch.tensor(self.psf_/np.sum(self.psf_)).float()

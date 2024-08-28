@@ -1,17 +1,13 @@
+"""This module implements the Spitfire join denoising reconstruction method"""
 import torch
 from sairyscan.enhancing.interface import SAiryscanEnhancing
 
 
-def hv_loss(img, weighting):
+def hv_loss(img: torch.Tensor, weighting: float) -> torch.Tensor:
     """Sparse Hessian regularization term
 
-    Parameters
-    ----------
-    img: Tensor
-        Tensor of shape BCYX containing the estimated image
-    weighting: float
-        Sparse weighting parameter in [0, 1]. 0 sparse, and 1 not sparse
-
+    :param img: Tensor of shape BCYX containing the estimated image
+    :param weighting: Sparse weighting parameter in [0, 1]. 0 sparse, and 1 not sparse
     """
     a, b, h, w = img.size()
     dxx2 = torch.square(-img[:, :, 2:, 1:-1] + 2 * img[:, :, 1:-1, 1:-1] - img[:, :, :-2, 1:-1])
@@ -23,38 +19,28 @@ def hv_loss(img, weighting):
     return hv / (a * b * h * w)
 
 
-def dataterm_denoise(noisy_image, denoised_image):
+def dataterm_denoise(noisy_image: torch.Tensor, denoised_image: torch.Tensor) -> torch.Tensor:
     """Denoising L2 data-term
 
     Compute the L2 error between the original image and the convoluted reconstructed image
 
-    Parameters
-    ----------
-    noisy_image: Tensor
-        Tensor of shape BCZYX containing the original blurry image
-    denoised_image: Tensor
-        Tensor of shape BCYX containing the estimated deblurred image
-
+    :param noisy_image: Tensor of shape BCZYX containing the original blurry image,
+    :param denoised_image: Tensor of shape BCYX containing the estimated deblurred image,
+    :return: The data term value
     """
     mse_ = 0
     for i in range(noisy_image.shape[2]):
         mse_ += torch.sum(torch.square(noisy_image[:, :, i, :, :] - denoised_image))
-    return mse_ / noisy_image.numel()
+    return mse_ / torch.tensor(noisy_image.numel())
 
 
 class SpitfireJoinDenoise(SAiryscanEnhancing):
     """Gray scaled image deconvolution with the Spitfire algorithm
 
-    Parameters
-    ----------
-    weight: float
-        model weight between hessian and sparsity. Value is in  ]0, 1[
-    reg: float
-        Regularization weight. Value is in [0, 1]
-
+    :param weight: model weight between hessian and sparsity. Value is in ]0, 1[,
+    :param reg: Regularization weight. Value is in ]0, 1[
     """
-
-    def __init__(self, weight=0.6, reg=0.5):
+    def __init__(self, weight: float = 0.6, reg: float = 0.5):
         super().__init__()
         self.weight = weight
         self.reg = reg
@@ -63,21 +49,29 @@ class SpitfireJoinDenoise(SAiryscanEnhancing):
         self.gradient_step_ = 0.01
         self.loss_ = None
 
-    def __call__(self, image):
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
+        """Do the reconstruction
+
+        :param image: Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images,
+        :return: The reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
+        """
         if image.ndim == 3:
             return self.run_2d(image)
-        elif image.ndim == 4:
+        if image.ndim == 4:
             raise NotImplementedError('Spitfire 3D deconvolution is not yet implemented')
+        raise ValueError('Spitfire deconvolution input dimension not recognized')
 
-    def run_2d(self, image):
+    def run_2d(self, image: torch.Tensor) -> torch.Tensor:
+        """Do the reconstruction for the 2D case
+
+        :param image: Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images,
+        :return: The reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
+        """
         self.progress(0)
         mini = torch.min(image)
         maxi = torch.max(image)
         image = (image-mini)/(maxi-mini)
         # pad image
-        #padding = 13
-        #pad_fn = torch.nn.ReflectionPad2d(padding)
-        #image_pad = pad_fn(image.detach().clone().view(1, 1, image.shape[0], image.shape[1]))
         image_pad = image.view(1, 1, image.shape[0], image.shape[1], image.shape[2])
 
         deconv_image = torch.mean(image_pad, axis=2)
@@ -87,6 +81,7 @@ class SpitfireJoinDenoise(SAiryscanEnhancing):
         previous_loss = 9e12
         count_eq = 0
         self.niter_ = 0
+        loss = None
         for i in range(self.max_iter_):
             self.progress(int(100*i/self.max_iter_))
             self.niter_ += 1
@@ -108,6 +103,7 @@ class SpitfireJoinDenoise(SAiryscanEnhancing):
         self.progress(100)
         out = deconv_image.view(image_pad.shape[3], image_pad.shape[4])
         return (maxi-mini)*out+mini
+
 
 metadata = {
     'name': 'SpitfireJoinDenoise',

@@ -1,25 +1,27 @@
+"""Implementation of detector registration using the MSE loss"""
 import numpy as np
 import torch
-import torchvision.transforms as transforms
-from .interface import SairyscanRegistration
+from torchvision import transforms
 from skimage.transform import rescale
-import torch.nn.functional as F
+
+from .interface import SAiryscanRegistration
 
 
-class SRegisterMSE(SairyscanRegistration):
+class SRegisterMSE(SAiryscanRegistration):
     """Register the detectors stack by translating each image to the detector position is array
 
-    Parameters
-    ----------
-    weight: int
-        Weight applied on the detector position translation
-
+    :param weight: Weight applied on the detector position translation
     """
-    def __init__(self, weight=1.0):
+    def __init__(self, weight: float = 1.0):
         super().__init__()
         self.weight = weight
 
-    def __call__(self, image):
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
+        """DO the registration
+
+        :param image: Single channel/frame stack to register,
+        :return: The registered stack
+        """
         self.progress(0)
         image_out = torch.zeros(image.shape, dtype=torch.float32)
         image_out[0, ...] = image[0, ...].clone()
@@ -40,7 +42,6 @@ class SRegisterMSE(SairyscanRegistration):
             min_pos = np.where(mse == np.min(mse))
             shift = ((min_pos[1][0]-5)/2, (min_pos[0][0]-5)/2)
             self.notify(f'shift {d} = ({shift[0]}, {shift[1]})')
-            print(f'shift {d} =', shift)
             image_out[d, ...] = self._translate_detector(image[d, ...],
                                                          (shift[0] / 2, shift[1] / 2))
             self.progress(100)
@@ -50,21 +51,14 @@ class SRegisterMSE(SairyscanRegistration):
     def _translate_detector(img, translate):
         """Translate one detector
 
-        Parameters
-        ----------
-        img: Tensor
-            Tensor for one single detector
-        translate: tuple
-            (x, y, z) or (x, y) translation vector
-
-        Returns
-        -------
-        Tensor: the translated tensor
+        :param img: Tensor for one single detector
+        :param translate: (x, y, z) or (x, y) translation vector
+        :return: the co-registered tensor
         """
         img_bc = img.view((1, 1, img.shape[0], img.shape[1]))
         img_out = transforms.functional.affine(img_bc, angle=0, translate=translate, scale=1,
-                                               shear=[0, 0],
-                                               interpolation=transforms.functional.InterpolationMode.BILINEAR)
+                        shear=[0, 0],
+                        interpolation=transforms.functional.InterpolationMode.BILINEAR)
         return img_out.view(img.shape)
 
 

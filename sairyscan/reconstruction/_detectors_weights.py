@@ -1,32 +1,50 @@
+"""This module implements strategies to weight the detectors"""
 import math
 import torch
 
 
 class SAiryscanWeights:
-    def __init__(self, method='mean'):
+    """Creates weight for each detector depending on a method
+
+    :param method: Method to calculate weights:
+                   ['mean', 'ring', 'ring_inv', 'd2c', 'id2c', 'exp_d2c', 'exp_d2c_inv']
+    """
+    def __init__(self, method: str = 'mean'):
         self.method = method
 
-    def __call__(self):
+    def __call__(self) -> torch.Tensor:
+        """Compute the weights
+
+        :return: The weights array (len=32)
+        """
         if self.method == 'mean':
             weights = torch.ones((32,))
             return weights / torch.sum(weights)
-        elif self.method == 'ring':
+        if self.method == 'ring':
             return self.ring_distance(3.0)
-        elif self.method == 'ring_inv':
+        if self.method == 'ring_inv':
             return self.ring_inv_distance(3.0)
-        elif self.method == 'd2c':
+        if self.method == 'd2c':
             d2c = self.distance_to_center(1)
             return d2c / torch.sum(d2c)
-        elif self.method == 'id2c':
+        if self.method == 'id2c':
             id2c = 3.0 - self.distance_to_center(1)
             return id2c / torch.sum(id2c)
-        elif self.method == 'exp_d2c':
+        if self.method == 'exp_d2c':
             return self.exp_distance_to_center(3.0)
-        elif self.method == 'exp_d2c_inv':
+        if self.method == 'exp_d2c_inv':
             return self.exp_inv_distance_to_center(3.0)
+        raise ValueError(f'Not recognized weighting method: {self.method}')
 
     @staticmethod
-    def ring_distance(tau):
+    def ring_distance(tau: float) -> torch.Tensor:
+        """Compute the weights as the distance of the detector ring to the center
+
+        The distance is calculated as exp(d/tau), where d is the ring index and tau a parameter
+
+        :param tau: Exponential factor to apply to the distance
+        :return: An array with the weight of each detector
+        """
         weights = torch.ones((32,))
         for i in range(1, 7):
             weights[i] = math.exp(1/tau)
@@ -37,7 +55,14 @@ class SAiryscanWeights:
         return weights/torch.sum(weights)
 
     @staticmethod
-    def ring_inv_distance(tau):
+    def ring_inv_distance(tau: float) -> torch.Tensor:
+        """Compute the weights as the inverted distance of the detector ring to the center
+
+        The distance is calculated as exp(-d/tau), where d is the ring index and tau a parameter
+
+        :param tau: Exponential factor to apply to the distance
+        :return: An array with the weight of each detector
+        """
         weights = torch.ones((32,))
         for i in range(1, 7):
             weights[i] = math.exp(-1 / tau)
@@ -48,21 +73,42 @@ class SAiryscanWeights:
         return weights/torch.sum(weights)
 
     @staticmethod
-    def exp_distance_to_center(tau):
+    def exp_distance_to_center(tau: float) -> torch.Tensor:
+        """Compute the weights as the distance of the detector to the central detector
+
+        The distance is calculated as exp(d/tau), where d is the distance to center and tau a
+        parameter
+
+        :param tau: Exponential factor to apply to the distance
+        :return: An array with the weight of each detector
+        """
         weights = SAiryscanWeights.distance_to_center(1)
         for i in range(32):
             weights[i] = math.exp(weights[i] / tau)
         return weights/torch.sum(weights)
 
     @staticmethod
-    def exp_inv_distance_to_center(tau):
+    def exp_inv_distance_to_center(tau: float) -> torch.Tensor:
+        """Compute the weights as the inverted distance of the detector to the central detector
+
+        The distance is calculated as exp(-d/tau), where d is the distance to center and tau a
+        parameter
+
+        :param tau: Exponential factor to apply to the distance
+        :return: An array with the weight of each detector
+        """
         weights = SAiryscanWeights.distance_to_center(1)
         for i in range(32):
             weights[i] = math.exp(-weights[i] / tau)
         return weights/torch.sum(weights)
 
     @staticmethod
-    def distance_to_center(d):
+    def distance_to_center(d: float) -> torch.Tensor:
+        """Compute the distance of each detector to the central detector
+
+        :param d: Width of a detector
+        :return: An array with the distance of each detector
+        """
         dist = torch.zeros((32,))
         dist[0] = SAiryscanWeights.norm(0, 0)
         dist[1] = SAiryscanWeights.norm(d, 0.5*d)
@@ -99,5 +145,11 @@ class SAiryscanWeights:
         return dist
 
     @staticmethod
-    def norm(a, b):
+    def norm(a: float, b: float) -> float:
+        """Compute the norm of a 2D vector
+
+        :param a: First component of the vector,
+        :param b: Second component of the vector,
+        :return: The vector norm
+        """
         return math.sqrt(a*a + b*b)

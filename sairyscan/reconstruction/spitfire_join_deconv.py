@@ -1,18 +1,15 @@
+"""This module implements the Spitfire join deconvolution reconstruction method"""
 import torch
 from .interface import SAiryscanReconstruction
 from ._detectors_weights import SAiryscanWeights
 
 
-def hv_loss(img, weighting):
-    """Sparse Hessian regularization term
+def hv_loss(img: torch.Tensor, weighting: float) -> torch.Tensor:
+    """Sparse Hessian regularization term (or loss)
 
-    Parameters
-    ----------
-    img: Tensor
-        Tensor of shape BCYX containing the estimated image
-    weighting: float
-        Sparse weighting parameter in [0, 1]. 0 sparse, and 1 not sparse
-
+    :param img: Tensor of shape BCYX containing the estimated image
+    :param weighting: Sparse weighting parameter in [0, 1]. 0 sparse, and 1 not sparse
+    :return: The loss value
     """
     a, b, h, w = img.size()
     dxx2 = torch.square(-img[:, :, 2:, 1:-1] + 2 * img[:, :, 1:-1, 1:-1] - img[:, :, :-2, 1:-1])
@@ -24,22 +21,19 @@ def hv_loss(img, weighting):
     return hv / (a * b * h * w)
 
 
-def dataterm_deconv(blurry_image, deblurred_image, psf, detector_weights):
+def dataterm_deconv(blurry_image: torch.Tensor,
+                    deblurred_image: torch.Tensor,
+                    psf: torch.Tensor,
+                    detector_weights: torch.Tensor
+                    ) -> torch.Tensor:
     """Deconvolution L2 data-term
 
     Compute the L2 error between the original image and the convoluted reconstructed image
 
-    Parameters
-    ----------
-    blurry_image: Tensor
-        Tensor of shape BCHYX containing the original blurry image
-    deblurred_image: Tensor
-        Tensor of shape BCYX containing the estimated deblurred image
-    psf: Tensor
-        Tensor containing the point spread function
-    detector_weights: Tensor
-        Weight applied to each detector
-
+    :param blurry_image: Tensor of shape BCHYX containing the original blurry image
+    :param deblurred_image: Tensor of shape BCYX containing the estimated deblurred image
+    :param psf:  containing the point spread function
+    :param detector_weights: Weight applied to each detector
     """
     a, b, h, w = deblurred_image.size()
     conv_op = torch.nn.Conv2d(1, 1, kernel_size=psf.shape[2],
@@ -59,18 +53,16 @@ def dataterm_deconv(blurry_image, deblurred_image, psf, detector_weights):
 class SpitfireJoinDeconv(SAiryscanReconstruction):
     """Gray scaled image deconvolution with the Spitfire algorithm
 
-    Parameters
-    ----------
-    psf: Tensor
-        Point spread function
-    weight: float
-        model weight between hessian and sparsity. Value is in  ]0, 1[
-    reg: float
-        Regularization weight. Value is in [0, 1]
-
+    :param psf:  Point spread function
+    :param weight: Model weight between hessian and sparsity. Value is in  ]0, 1[
+    :param reg: Regularization weight. Value is in [0, 1]
+    :param detector_weights: Method to compute the detectors weights
     """
-
-    def __init__(self, psf, weight=0.6, reg=0.5, detector_weights='mean'):
+    def __init__(self,
+                 psf: torch.Tensor,
+                 weight: float = 0.6,
+                 reg: float = 0.5,
+                 detector_weights: str = 'mean'):
         super().__init__()
         self.num_args = 1
         self.psf = psf
@@ -82,27 +74,24 @@ class SpitfireJoinDeconv(SAiryscanReconstruction):
         self.gradient_step_ = 0.01
         self.loss_ = None
 
-    def __call__(self, image):
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
         """Reconstruct the spitfire join deconvolution
 
-        Parameters
-        ----------
-        image: Tensor
-            Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images
-
-        Returns
-        -------
-        Tensor: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
-
+        :param image: Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images,
+        :return: The reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
         """
         if image.ndim == 3:
             return self.run_2d(image)
-        elif image.ndim == 4:
+        if image.ndim == 4:
             raise NotImplementedError('Spitfire 3D deconvolution is not yet implemented')
-        else:
-            raise NotImplementedError('Spitfire reconstruction: image dimension not supported')
+        raise NotImplementedError('Spitfire reconstruction: image dimension not supported')
 
-    def run_2d(self, image):
+    def run_2d(self, image) -> torch.Tensor:
+        """Do the 2D reconstruction
+
+        :param image: Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images,
+        :return: The reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
+        """
         self.progress(0)
 
         # detectors weights
@@ -129,6 +118,7 @@ class SpitfireJoinDeconv(SAiryscanReconstruction):
         count_eq = 0
         self.niter_ = 0
 
+        loss = None
         for i in range(self.max_iter_):
             self.progress(int(100*i/self.max_iter_))
             self.niter_ += 1

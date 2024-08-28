@@ -1,3 +1,4 @@
+"""This module implements the reconstruction methods"""
 from .interface import SAiryscanReconstruction
 from .ifed import IFED
 from .isfed import ISFED
@@ -11,15 +12,16 @@ from .spitfire_flow import SSpitfireFlow
 from ._sure import SureMap
 
 
-__all__ = ['SAiryscanReconstruction',
-           'IFED',
-           'ISFED',
-           'ISM',
-           'PseudoConfocal',
-           'SpitfireJoinDeconv',
-           'SpitfireJoinDenoise',
-           'SSpitfireFlow',
-           'SureMap',
-           'IFEDDenoising',
-           'ISFEDDenoising'
-           ]
+__all__ = [
+    'SAiryscanReconstruction',
+    'IFED',
+    'ISFED',
+    'ISM',
+    'PseudoConfocal',
+    'SpitfireJoinDeconv',
+    'SpitfireJoinDenoise',
+    'SSpitfireFlow',
+    'SureMap',
+    'IFEDDenoising',
+    'ISFEDDenoising'
+]

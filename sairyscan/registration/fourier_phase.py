@@ -1,26 +1,29 @@
-import numpy as np
+"""Implementation of detectors registration using the Fourier Phase loss"""
 import torch
 import torch.nn.functional as F
-import torchvision.transforms as transforms
-from .interface import SairyscanRegistration
-from skimage.registration import phase_cross_correlation, optical_flow_tvl1
+from torchvision import transforms
+from skimage.registration import phase_cross_correlation
 from skimage.transform import rescale
 
+from .interface import SAiryscanRegistration
 
-class SRegisterFourierPhase(SairyscanRegistration):
+
+class SRegisterFourierPhase(SAiryscanRegistration):
     """Register the detectors stack by translating each image to the detector position is array
 
-    Parameters
-    ----------
-    weight: int
-        Weight applied on the detector position translation
+    :param weight: Weight applied on the detector position translation
 
     """
-    def __init__(self, weight=1.0):
+    def __init__(self, weight: float = 1.0):
         super().__init__()
         self.weight = weight
 
-    def __call__(self, image):
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
+        """Do the registration
+
+        :param image: Single channel/frame stack to register,
+        :return: The registered stack
+        """
         # image_np = image.detach().numpy()
         image_out = torch.zeros(image.shape, dtype=torch.float32)
         image_out[0, ...] = image[0, ...].clone()
@@ -37,14 +40,11 @@ class SRegisterFourierPhase(SairyscanRegistration):
         return image_out
 
     @staticmethod
-    def hessian(img):
+    def hessian(img: torch.Tensor) -> torch.Tensor:
         """Sparse Hessian regularization term
 
-        Parameters
-        ----------
-        img: Tensor
-            Tensor of shape BCYX containing the estimated image
-
+        :param img: Tensor of shape BCYX containing the estimated image
+        :return: THe hessian term
         """
         dxx2 = torch.square(-img[2:, 1:-1] + 2 * img[1:-1, 1:-1] - img[:-2, 1:-1])
         dyy2 = torch.square(-img[1:-1, 2:] + 2 * img[1:-1, 1:-1] - img[1:-1, :-2])
@@ -53,30 +53,28 @@ class SRegisterFourierPhase(SairyscanRegistration):
         return dxx2 + dyy2 + 2 * dxy2
 
     @staticmethod
-    def gradient(img):
+    def gradient(img: torch.Tensor) -> torch.Tensor:
+        """Compute the gradient of the image
+
+        :param img: Image to process,
+        :return: THe gradient image of img
+        """
         tv_h = torch.abs(img[1:, :] - img[:-1, :])
         tv_w = torch.abs(img[:, 1:] - img[:, :-1])
         return F.pad(tv_h, (0, 0, 1, 0), "constant", 0) + F.pad(tv_w, (1, 0, 0, 0), "constant", 0)
 
     @staticmethod
-    def _translate_detector(img, translate):
+    def _translate_detector(img: torch.Tensor, translate: tuple[float, float]) -> torch.Tensor:
         """Translate one detector
 
-        Parameters
-        ----------
-        img: Tensor
-            Tensor for one single detector
-        translate: tuple
-            (x, y, z) or (x, y) translation vector
-
-        Returns
-        -------
-        Tensor: the translated tensor
+        :param img: Tensor for one single detector
+        :param translate: (x, y, z) or (x, y) translation vector
+        :returns: the translated tensor
         """
         img_bc = img.view((1, 1, img.shape[0], img.shape[1]))
         img_out = transforms.functional.affine(img_bc, angle=0, translate=translate, scale=1,
-                                               shear=[0, 0],
-                                               interpolation=transforms.functional.InterpolationMode.BILINEAR)
+                    shear=[0, 0],
+                    interpolation=transforms.functional.InterpolationMode.BILINEAR)
         return img_out.view(img.shape)
 
 

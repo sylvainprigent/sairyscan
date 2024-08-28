@@ -1,20 +1,19 @@
+"""This module implements the Spitfire workflow for denoising or deconvolution"""
 import numpy as np
+
 from scipy.signal import convolve2d
 import torch
-from .interface import SAiryscanReconstruction
 import torch.nn.functional as F
 
+from .interface import SAiryscanReconstruction
 
-def hv_loss(img, weighting):
+
+def hv_loss(img: torch.Tensor, weighting: float) -> torch.Tensor:
     """Sparse Hessian regularization term
 
-    Parameters
-    ----------
-    img: Tensor
-        Tensor of shape BCYX containing the estimated image
-    weighting: float
-        Sparse weighting parameter in [0, 1]. 0 sparse, and 1 not sparse
-
+    :param img: Tensor of shape BCYX containing the estimated image,
+    :param weighting: Sparse weighting parameter in [0, 1]. 0 sparse, and 1 not sparse,
+    :return: The regularization value
     """
     a, b, h, w = img.size()
     dxx2 = torch.square(-img[:, :, 2:, 1:-1] + 2 * img[:, :, 1:-1, 1:-1] - img[:, :, :-2, 1:-1])
@@ -26,18 +25,11 @@ def hv_loss(img, weighting):
     return hv / (a * b * h * w)
 
 
-def hessian(img):
+def hessian(img: torch.Tensor) -> torch.Tensor:
     """Apply Hessian filter on a tensor
 
-    Parameters
-    ----------
-    img: Tensor
-        Input image tensor
-
-    Returns
-    -------
-        Tensor of filtered image
-
+    :param img: Input image tensor,
+    :return: Tensor of filtered image
     """
     dxx2 = torch.square(-img[:, :, 2:, 1:-1] + 2 * img[:, :, 1:-1, 1:-1] - img[:, :, :-2, 1:-1])
     dyy2 = torch.square(-img[:, :, 1:-1, 2:] + 2 * img[:, :, 1:-1, 1:-1] - img[:, :, 1:-1, :-2])
@@ -46,29 +38,27 @@ def hessian(img):
     return F.pad(dxx2 + dyy2 + 2 * dxy2, (1, 1, 1, 1), "constant", 0)
 
 
-def dataterm_flow(blurry_image, deblurred_image, detector_weights):
+def dataterm_flow(blurry_image: torch.Tensor,
+                  deblurred_image: torch.Tensor,
+                  detector_weights: torch.Tensor
+                  ) -> torch.Tensor:
     """Denoising L2 data-term
 
     Compute the L2 error between the original image and the reconstructed image flow
 
-    Parameters
-    ----------
-    blurry_image: Tensor
-        Tensor of shape BCHYX containing the original blurry image
-    deblurred_image: Tensor
-        Tensor of shape BCYX containing the estimated deblurred image
-    detector_weights: Tensor
-        Weight applied to each detector
-
+    :param blurry_image: Tensor of shape BCHYX containing the original blurry image
+    :param deblurred_image: Tensor of shape BCYX containing the estimated deblurred image
+    :param detector_weights: Weight applied to each detector
     """
     mse = torch.nn.MSELoss()
     mse_ = 0
     for i in range(blurry_image.shape[2]):
-        mse_ += mse(blurry_image[:, :, i, :, :] - detector_weights[i]*hessian(blurry_image[:, :, i, :, :]), deblurred_image)
+        mse_ += mse(blurry_image[:, :, i, :, :] -
+                    detector_weights[i]*hessian(blurry_image[:, :, i, :, :]), deblurred_image)
     return mse_
 
 
-def estimate_noise(data):
+def estimate_noise(data: torch.Tensor) -> float:
     """ Estimate the RMS noise of an image
 
     from http://stackoverflow.com/questions/2440504/
@@ -78,48 +68,42 @@ def estimate_noise(data):
     Computer Vision and Image Understanding,
     Vol. 64, No. 2, pp. 300-302, Sep. 1996 [PDF]
 
+    :param data: Image to estimate noise
+    :return: The estimated variance of the noise
     """
-
     data = data.detach().numpy()[0, 0, ...]
     print('data.shape=', data.shape)
-    H, W = data.shape
+    height, width = data.shape
     data = np.nan_to_num(data)
-    M = [[1, -2, 1],
-         [-2, 4, -2],
-         [1, -2, 1]]
+    mat = [[1, -2, 1],
+           [-2, 4, -2],
+           [1, -2, 1]]
 
-    sigma = np.sum(np.sum(np.abs(convolve2d(data, M))))
-    sigma = sigma * np.sqrt(0.5 * np.pi) / (6 * (W - 2) * (H - 2))
+    sigma = np.sum(np.sum(np.abs(convolve2d(data, mat))))
+    sigma = sigma * np.sqrt(0.5 * np.pi) / (6 * (width - 2) * (height - 2))
 
     return sigma*sigma
 
 
-def calculate_weights(image):
-    """Calculate the hessian weights of the each detector
+def calculate_weights(image: torch.Tensor) -> torch.Tensor:
+    """Calculate the hessian weights of each detector
 
-    Parameters
-    ----------
-    image: Tensor
-        Detectors raw images
-
-    Returns
-    -------
-    vector containing one weight per detector
-
+    :param image: Detectors raw images
+    :return: vector containing one weight per detector
     """
     weights = torch.ones((32,))
     for d in range(32):
         weights[d] = estimate_noise(image[:, :, d, :, :])
-
-    #for d in range(32):
-    #    r = 2.0*image[:, :, d, :, :] - F.pad(image[:, :, d, 1:, :], (0, 0, 1, 0), "constant", 0) - F.pad(image[:, :, d, :, 1:], (1, 0, 0, 0), "constant", 0)
-    #    weights[d] = torch.mean(r*r/6)
-    print('weights=', weights)
     return weights
 
 
 class SSpitfireFlow(SAiryscanReconstruction):
-    def __init__(self, weight=0.6, reg=0.5):
+    """Workflow for spitfire denoising
+
+    :param weight: Spitfire weight in ]0, 1[,
+    :param reg: Spitfire regularization in ]0, 1[
+    """
+    def __init__(self, weight: float = 0.6, reg: float = 0.5):
         super().__init__()
         self.num_args = 1
         self.weight = weight
@@ -129,27 +113,24 @@ class SSpitfireFlow(SAiryscanReconstruction):
         self.gradient_step_ = 0.01
         self.loss_ = None
 
-    def __call__(self, image):
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
         """Reconstruct the opticalflow denoised ISM with spitfire regularisation
 
-        Parameters
-        ----------
-        image: Tensor
-            Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images
-
-        Returns
-        -------
-        Tensor: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
-
+        :param image: Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images
+        :return: The reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
         """
         if image.ndim == 3:
             return self.run_2d(image)
-        elif image.ndim == 4:
+        if image.ndim == 4:
             raise NotImplementedError('Spitfire 3D deconvolution is not yet implemented')
-        else:
-            raise NotImplementedError('Spitfire reconstruction: image dimension not supported')
+        raise NotImplementedError('Spitfire reconstruction: image dimension not supported')
 
-    def run_2d(self, image):
+    def run_2d(self, image: torch.Tensor) -> torch.Tensor:
+        """Implements the 2D case
+
+        :param image: Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images
+        :return: The reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
+        """
         image = image.view(1, 1, image.shape[0], image.shape[1], image.shape[2])
         deconv_image = image[:, :, 0, :, :].detach().clone()
         deconv_image.requires_grad = True

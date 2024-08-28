@@ -1,22 +1,31 @@
+"""This module implement the SURE estimation of weights between two images"""
 import numpy as np
 import torch
-import torchvision.transforms as transforms
+from torchvision import transforms
 from skimage.filters import threshold_otsu
 
 
 class SureMap:
     """Calculate the Sure weights map for IFED and ISFED
 
-    Parameters
-    ----------
-    smooth: bool
-        True to smooth the map with a sigma=2 gaussian filter
+    :param smooth: True to smooth the map with a sigma=2 gaussian filter
     """
-    def __init__(self, smooth=False):
+    def __init__(self, smooth: float = False):
         self.patch_size = 5
         self.smooth = smooth
 
-    def __call__(self, image_ref, image_a, image_b):
+    def __call__(self,
+                 image_ref: torch.Tensor,
+                 image_a: torch.Tensor,
+                 image_b: torch.Tensor
+                 ) -> torch.Tensor:
+        """Do the calculation
+
+        :param image_ref: Reference image
+        :param image_a: First image to combine
+        :param image_b: Second image to combine
+        :return: The sure map, where each coefficient the weight between the two images
+        """
         width = image_ref.shape[0]
         height = image_ref.shape[1]
         image_ref = image_ref.view(1, 1, image_ref.shape[0], image_ref.shape[1])
@@ -41,10 +50,20 @@ class SureMap:
             return transforms.functional.gaussian_blur(sure_map.view(1, 1, width, height),
                                                        kernel_size=(7, 7),
                                                        sigma=2).view(width, height)
-        else:
-            return sure_map
+        return sure_map
 
-    def mode(self, image_ref, image_a, image_b):
-        sure_map = self.__call__(image_ref, image_a, image_b).detach().numpy()
+    def mode(self,
+             image_ref: torch.Tensor,
+             image_a: torch.Tensor,
+             image_b: torch.Tensor
+             ) -> float:
+        """Calculate a single weight coefficient to combine image_a and image_b
+
+        :param image_ref: Reference image
+        :param image_a: First image to combine
+        :param image_b: Second image to combine
+        :return: The weighting coefficient
+        """
+        sure_map = self(image_ref, image_a, image_b).detach().numpy()
         th = threshold_otsu(sure_map)
         return np.mean(sure_map[sure_map >= th])

@@ -1,8 +1,11 @@
+"""This module implements the ISFED with denoising reconstruction method"""
 import torch
+
+from ..enhancing.spitfire_denoise import SpitfireDenoise
+
 from .interface import SAiryscanReconstruction
 from ._sure import SureMap
 from .spitfire_join_denoise import SpitfireJoinDenoise
-from sairyscan.enhancing.spitfire_denoise import SpitfireDenoise
 
 
 class ISFEDDenoising(SAiryscanReconstruction):
@@ -11,27 +14,26 @@ class ISFEDDenoising(SAiryscanReconstruction):
     The denoising is performed on the two terms of the ISFED image difference using the SPITFIR(e)
     algorithm
 
-    Parameters
-    ----------
-    epsilon: str or float
-        weighting parameter for the ISFED difference second term. If epsilon='map', epsilon is an
-        automatic estimated weight map using the SURE criterion. If epsilon='mode', epsilon is a
-        float which corresponds to the main mode of the SURE map. Otherwise, epsilon can be fixed
-        to any float value
-    reg_inner: float
-        Regularization for denoising of the first term of ISFED reconstruction
-    reg_outer: float
-        Regularization for the denoising of the second term of the SFED reconstruction
-    weighting_inner: float
-        Weighting parameter of the SPITFIR(e) denoising model for the first term of ISFED. Must be
-        in [0, 1], with value close to 0 for sparse signal and close to one otherwise.
-    weighting_outer: float
-        Weighting parameter of the SPITFIR(e) denoising model for the second term of ISFED. Must be
-        in [0, 1], with value close to 0 for sparse signal and close to one otherwise.
-
+    :param epsilon: weighting parameter for the ISFED difference second term. If epsilon='map',
+        epsilon is an automatic estimated weight map using the SURE criterion. If epsilon='mode',
+        epsilon is a float which corresponds to the main mode of the SURE map. Otherwise, epsilon
+        can be fixed to any float value
+    :param reg_inner: Regularization for denoising of the first term of ISFED reconstruction
+    :param reg_outer: Regularization for the denoising of the second term of the SFED reconstruction
+    :param weighting_inner: Weighting parameter of the SPITFIR(e) denoising model for the first
+        term of ISFED. Must be in [0, 1], with value close to 0 for sparse signal and close to
+        one otherwise.
+    :param weighting_outer: Weighting parameter of the SPITFIR(e) denoising model for the second
+        term of ISFED. Must be in [0, 1], with value close to 0 for sparse signal and close to one
+        otherwise.
     """
-    def __init__(self, epsilon=0.3, reg_inner=0.995, reg_outer=0.995, weighting_inner=0.9,
-                 weighting_outer=0.9, join_denoising=False):
+    def __init__(self,
+                 epsilon: float = 0.3,
+                 reg_inner: float = 0.995,
+                 reg_outer: float = 0.995,
+                 weighting_inner: float = 0.9,
+                 weighting_outer: float = 0.9,
+                 join_denoising: bool = False):
         super().__init__()
         self.num_args = 2
         self.epsilon = epsilon
@@ -42,20 +44,13 @@ class ISFEDDenoising(SAiryscanReconstruction):
         self.join_denoising = join_denoising
         self.map_ = None
 
-    def __call__(self, image, reg_image):
+    def __call__(self, image: torch.Tensor, reg_image: torch.Tensor) -> torch.Tensor:
         """Do the reconstruction
 
-        Parameters
-        ----------
-        image: Tensor
-            Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images
-        reg_image
-            Co-registered airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images
-
-        Returns
-        -------
-        Tensor: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
-
+        :param image: Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images,
+        :param reg_image: Co-registered airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for
+            2D images,
+        :return: The reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
         """
         if self.join_denoising:
             den_a_filter = SpitfireJoinDenoise(weight=self.weighting_inner, reg=self.reg_inner)

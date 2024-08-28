@@ -1,11 +1,16 @@
-import os
+"""This module implements the command line interface to run SAiryscan reconstructions"""
 import argparse
-
-from sairyscan.api import SAiryscanAPI
 from skimage.io import imsave
 
+from ..api import SAiryscanAPI
 
-def add_args_to_parser(parser, api):
+
+def add_args_to_parser(parser: argparse.ArgumentParser, api: SAiryscanAPI):
+    """Add arguments to the command line parser from the API
+
+    :param parser: Parser to modify
+    :param api: API that contains all the available parameters
+    """
     for filter_name in api.filters.get_keys():
         params = api.filters.get_parameters(filter_name)
         for key, value in params.items():
@@ -13,7 +18,9 @@ def add_args_to_parser(parser, api):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='SAiryscan reconstruction', conflict_handler='resolve')
+    """Entry point for the command line tool"""
+    parser = argparse.ArgumentParser(description='SAiryscan reconstruction',
+                                     conflict_handler='resolve')
 
     parser.add_argument('-i', '--input', help='Input image file', default='.czi')
     parser.add_argument('-r', '--reg', help='Registration method', default='none')
@@ -47,3 +54,7 @@ def main():
     reader = api.reader(args.input)
     out_image = pipeline(reader.data())
     imsave(args.output, out_image.detach().numpy())
+
+
+if __name__ == "__main__":
+    main()

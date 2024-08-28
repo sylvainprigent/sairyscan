@@ -1,6 +1,6 @@
+"""This module gives access to example data for testing and demo SAiryscan"""
 import os.path as osp
 import os
-import numpy as np
 from sairyscan.core import SAiryscanReader
 
 __all__ = ['celegans']
@@ -25,8 +25,7 @@ def _fetch(data_filename):
 
     if os.path.isfile(filepath):
         return filepath
-    else:
-        raise FileExistsError("Cannot find the file:", filepath)
+    raise FileExistsError("Cannot find the file:", filepath)
 
 
 def _load(f):

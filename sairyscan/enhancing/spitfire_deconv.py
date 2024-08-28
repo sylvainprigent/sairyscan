@@ -1,17 +1,14 @@
+"""This module implement a Spitfire deconvolution"""
 import torch
 from .interface import SAiryscanEnhancing
 
 
-def hv_loss(img, weighting):
+def hv_loss(img: torch.Tensor, weighting: float) -> torch.Tensor:
     """Sparse Hessian regularization term
 
-    Parameters
-    ----------
-    img: Tensor
-        Tensor of shape BCYX containing the estimated image
-    weighting: float
-        Sparse weighting parameter in [0, 1]. 0 sparse, and 1 not sparse
-
+    :param img: Tensor of shape BCYX containing the estimated image
+    :param weighting: Sparse weighting parameter in [0, 1]. 0 sparse, and 1 not sparse
+    :return: The loss value
     """
     a, b, h, w = img.size()
     dxx2 = torch.square(-img[:, :, 2:, 1:-1] + 2 * img[:, :, 1:-1, 1:-1] - img[:, :, :-2, 1:-1])
@@ -23,20 +20,15 @@ def hv_loss(img, weighting):
     return hv / (a * b * h * w)
 
 
-def dataterm_deconv(blurry_image, deblurred_image, psf):
+def dataterm_deconv(blurry_image: torch.Tensor, deblurred_image: torch.Tensor, psf: torch.Tensor):
     """Deconvolution L2 data-term
 
-    Compute the L2 error between the original image and the convoluted reconstructed image
+    Compute the L2 error between the original image and the convoluted reconstructed image.
 
-    Parameters
-    ----------
-    blurry_image: Tensor
-        Tensor of shape BCYX containing the original blurry image
-    deblurred_image: Tensor
-        Tensor of shape BCYX containing the estimated deblurred image
-    psf: Tensor
-        Tensor containing the point spread function
-
+    :param blurry_image: Tensor of shape BCYX containing the original blurry image,
+    :param deblurred_image: Tensor of shape BCYX containing the estimated deblurred image,
+    :param psf: Tensor containing the point spread function,
+    :return: The data term value
     """
     conv_op = torch.nn.Conv2d(1, 1, kernel_size=psf.shape[2],
                               stride=1,
@@ -51,18 +43,11 @@ def dataterm_deconv(blurry_image, deblurred_image, psf):
 class SpitfireDeconv(SAiryscanEnhancing):
     """Gray scaled image deconvolution with the Spitfire algorithm
 
-    Parameters
-    ----------
-    psf: Tensor
-        Point spread function
-    weight: float
-        model weight between hessian and sparsity. Value is in  ]0, 1[
-    reg: float
-        Regularization weight. Value is in [0, 1]
-
+    :param psf: Point spread function,
+    :param weight: Model weight between hessian and sparsity. Value is in  ]0, 1[,
+    :param reg: Regularization weight. Value is in [0, 1]
     """
-
-    def __init__(self, psf, weight=0.6, reg=0.995):
+    def __init__(self, psf: torch.Tensor, weight: float = 0.6, reg: float = 0.995):
         super().__init__()
         self.psf = psf
         self.weight = weight
@@ -72,13 +57,22 @@ class SpitfireDeconv(SAiryscanEnhancing):
         self.gradient_step_ = 0.01
         self.loss_ = None
 
-    def __call__(self, image):
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
+        """Do the deconvolution
+
+        :param image: Image to deblur
+        :return: The deblurred image
+        """
         if image.ndim == 2:
             return self.run_2d(image)
-        elif image.ndim == 3:
-            raise NotImplementedError('Spitfire 3D deconvolution is not yet implemented')
+        raise NotImplementedError('Spitfire 3D deconvolution is not yet implemented')
 
-    def run_2d(self, image):
+    def run_2d(self,  image: torch.Tensor) -> torch.Tensor:
+        """Do the deconvolution for the 2D case
+
+        :param image: Image to deblur
+        :return: The deblurred image
+        """
         self.progress(0)
         image = (image-torch.min(image))/(torch.max(image)-torch.min(image))
         # pad image
@@ -94,6 +88,7 @@ class SpitfireDeconv(SAiryscanEnhancing):
         previous_loss = 9e12
         count_eq = 0
         self.niter_ = 0
+        loss = None
         for i in range(self.max_iter_):
             self.progress(int(100*i/self.max_iter_))
             self.niter_ += 1
@@ -113,7 +108,8 @@ class SpitfireDeconv(SAiryscanEnhancing):
             scheduler.step()
         self.loss_ = loss
         self.progress(100)
-        return deconv_image.view(image_pad.shape[2], image_pad.shape[3])[padding:-padding, padding:-padding]
+        return deconv_image.view(image_pad.shape[2],
+                                 image_pad.shape[3])[padding:-padding, padding:-padding]
 
 
 metadata = {

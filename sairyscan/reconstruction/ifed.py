@@ -1,10 +1,16 @@
+"""This module implements the IFED reconstruction method"""
 import torch
 from .interface import SAiryscanReconstruction
 from ._sure import SureMap
 
 
 class IFED(SAiryscanReconstruction):
-    def __init__(self, inner_ring_index=7, epsilon=0.3):
+    """Airyscan reconstruction using the IFED method
+
+    :param inner_ring_index: Index of the last detector of the inner ring [7, 19]
+    :param epsilon: Coefficient (or weight) for combining inner and outer ring images
+    """
+    def __init__(self, inner_ring_index: int = 7, epsilon: str | float = 0.3):
         super().__init__()
 
         print('ifed constructor inner index=', inner_ring_index)
@@ -15,18 +21,11 @@ class IFED(SAiryscanReconstruction):
         if inner_ring_index not in [7, 19]:
             raise ValueError('Inner ring index must be in (7, 19)')
 
-    def __call__(self, image):
-        """Reconstruct the IFED image from raw airyscan data
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
+        """Do the reconstruction
 
-        Parameters
-        ----------
-        image: Tensor
-            Raw airyscan image. [H, Z, Y, X] for 3D image, [H, Y, X] for 2D images
-
-        Returns
-        -------
-        Tensor: the reconstructed image. [Z, Y, X] for 3D, [Y, X] for 2D
-
+        :param image: Raw detector stack to reconstruct [H (Z) Y X]
+        :return: high resolution image [(Z) Y X]
         """
         self.progress(0)
         self.notify('IFED: sum inner and outer detectors')

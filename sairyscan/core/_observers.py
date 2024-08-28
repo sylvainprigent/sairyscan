@@ -1,50 +1,9 @@
-
-class SObservable:
-    """Interface for data processing class
-
-    The observable class can notify the observers for progress
-
-    """
-    def __init__(self):
-        self._observers = list()
-
-    def add_observer(self, observer):
-        """Add an observer
-
-        Parameters
-        ----------
-        observer: SObserver
-            Observer class
-
-        """
-        self._observers.append(observer)
-
-    def notify(self, message):
-        """Notify progress to observers
-
-        Parameters
-        ----------
-        message: str
-            Progress message
-
-        """
-        for obs in self._observers:
-            obs.notify(message)
-
-    def progress(self, value):
-        """Notify progress to observers
-
-        Parameters
-        ----------
-        value: int
-            Progress value in [0, 100]
-
-        """
-        for obs in self._observers:
-            obs.progress(value)
+"""Module to define the processing class interface using the observer pattern"""
+from abc import ABC, abstractmethod
+import torch
 
 
-class SObserver:
+class SObserver(ABC):
     """Interface of observer to notify progress
 
     An observer must implement the progress and message
@@ -53,35 +12,65 @@ class SObserver:
     def __init__(self):
         pass
 
-    def notify(self, message):
+    @abstractmethod
+    def notify(self, message: str):
         """Notify a progress message
 
-        Parameters
-        ----------
-        message: str
-            Progress message
-
+        :param message: Progress message
         """
-        raise Exception('SObserver is abstract')
+        raise NotImplementedError('SObserver is abstract')
 
-    def progress(self, value):
+    @abstractmethod
+    def progress(self, value: int):
         """Notify progress value
 
-        Parameters
-        ----------
-        value: int
-            Progress value in [0, 100]
+        :param value: Progress value in [0, 100]
+        """
+        raise NotImplementedError('SObserver is abstract')
+
+
+class SObservable:
+    """Interface for any data processing class
+
+    The observable class can notify the observers for progress
+    """
+    def __init__(self):
+        self._observers = []
+
+    def add_observer(self, observer: SObserver):
+        """Add an observer
+
+        :param observer: Observer instance
 
         """
-        raise Exception('SObserver is abstract')
+        self._observers.append(observer)
+
+    def notify(self, message: str):
+        """Notify progress to observers
+
+        :param message: Progress message
+        """
+        for obs in self._observers:
+            obs.notify(message)
+
+    def progress(self, value: int):
+        """Notify progress to observers
+
+        :param value: Progress value in [0, 100]
+        """
+        for obs in self._observers:
+            obs.progress(value)
+
+    def __call__(self, image: torch.Tensor) -> torch.Tensor:
+        """Run the data processing
+
+        :param image: Image to process,
+        :return: The processed image
+        """
 
 
 class SObserverConsole(SObserver):
-    """print message and progress to console"""
-    def __init__(self):
-        super().__init__()
-        pass
-
+    """Implementation of an observer that print messages and progress to console"""
     def notify(self, message):
         print(message)
 
