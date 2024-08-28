@@ -1,0 +1,605 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modules &#8212; SAiryscan 0.0.3 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c01ab6dc" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=4acdca81"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'modules';</script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="sairyscan.api.SAiryscanAPI" href="generated/sairyscan.api.SAiryscanAPI.html" />
+    <link rel="prev" title="Guide" href="guide.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SAiryscan 0.0.3 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="about.html">SAiryscan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Modules</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.api.SAiryscanAPI.html">sairyscan.api.SAiryscanAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.api.SAiryscanPipeline.html">sairyscan.api.SAiryscanPipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.api.SAiryscanLoop.html">sairyscan.api.SAiryscanLoop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.registration.SAiryscanRegistration.html">sairyscan.registration.SAiryscanRegistration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.registration.SRegisterPosition.html">sairyscan.registration.SRegisterPosition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.registration.SRegisterFourierPhase.html">sairyscan.registration.SRegisterFourierPhase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.registration.SRegisterMSE.html">sairyscan.registration.SRegisterMSE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.SAiryscanReconstruction.html">sairyscan.reconstruction.SAiryscanReconstruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.IFED.html">sairyscan.reconstruction.IFED</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.ISFED.html">sairyscan.reconstruction.ISFED</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.ISM.html">sairyscan.reconstruction.ISM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.PseudoConfocal.html">sairyscan.reconstruction.PseudoConfocal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.SpitfireJoinDeconv.html">sairyscan.reconstruction.SpitfireJoinDeconv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.SpitfireJoinDenoise.html">sairyscan.reconstruction.SpitfireJoinDenoise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.SSpitfireFlow.html">sairyscan.reconstruction.SSpitfireFlow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.SureMap.html">sairyscan.reconstruction.SureMap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.IFEDDenoising.html">sairyscan.reconstruction.IFEDDenoising</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.reconstruction.ISFEDDenoising.html">sairyscan.reconstruction.ISFEDDenoising</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.enhancing.SAiryscanEnhancing.html">sairyscan.enhancing.SAiryscanEnhancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.enhancing.SAiryscanGaussian.html">sairyscan.enhancing.SAiryscanGaussian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.enhancing.SAiryscanWiener.html">sairyscan.enhancing.SAiryscanWiener</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.enhancing.SAiryscanRichardsonLucy.html">sairyscan.enhancing.SAiryscanRichardsonLucy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.enhancing.SpitfireDeconv.html">sairyscan.enhancing.SpitfireDeconv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.data.celegans.html">sairyscan.data.celegans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.core.SAiryscanReader.html">sairyscan.core.SAiryscanReader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.core.Settings.html">sairyscan.core.Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.core.SettingsContainer.html">sairyscan.core.SettingsContainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.core.SObservable.html">sairyscan.core.SObservable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.core.SObserver.html">sairyscan.core.SObserver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/sairyscan.core.SObserverConsole.html">sairyscan.core.SObserverConsole</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/modules.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Modules</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api">API</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#registration">Registration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reconstruction">Reconstruction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#enhancing">Enhancing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-data">Example data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-patterns">Internal patterns</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="modules">
+<h1>Modules<a class="headerlink" href="#modules" title="Link to this heading">#</a></h1>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.api.SAiryscanAPI.html#sairyscan.api.SAiryscanAPI" title="sairyscan.api.SAiryscanAPI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAiryscanAPI</span></code></a></p></td>
+<td><p>Main API to build an Airyscan data reconstruction pipeline</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.api.SAiryscanPipeline.html#sairyscan.api.SAiryscanPipeline" title="sairyscan.api.SAiryscanPipeline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAiryscanPipeline</span></code></a></p></td>
+<td><p>Build and run a reconstruction pipeline in a single image</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.api.SAiryscanLoop.html#sairyscan.api.SAiryscanLoop" title="sairyscan.api.SAiryscanLoop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAiryscanLoop</span></code></a></p></td>
+<td><p>Apply a SAiryscan reconstruction method on all the frames and channels</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="registration">
+<h2>Registration<a class="headerlink" href="#registration" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.registration.SAiryscanRegistration.html#sairyscan.registration.SAiryscanRegistration" title="sairyscan.registration.SAiryscanRegistration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAiryscanRegistration</span></code></a></p></td>
+<td><p>Interface for Airyscan detectors registration method</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.registration.SRegisterPosition.html#sairyscan.registration.SRegisterPosition" title="sairyscan.registration.SRegisterPosition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SRegisterPosition</span></code></a></p></td>
+<td><p>Register the detectors stack by translating each image to the detector position is array</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.registration.SRegisterFourierPhase.html#sairyscan.registration.SRegisterFourierPhase" title="sairyscan.registration.SRegisterFourierPhase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SRegisterFourierPhase</span></code></a></p></td>
+<td><p>Register the detectors stack by translating each image to the detector position is array</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.registration.SRegisterMSE.html#sairyscan.registration.SRegisterMSE" title="sairyscan.registration.SRegisterMSE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SRegisterMSE</span></code></a></p></td>
+<td><p>Register the detectors stack by translating each image to the detector position is array</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="reconstruction">
+<h2>Reconstruction<a class="headerlink" href="#reconstruction" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.SAiryscanReconstruction.html#sairyscan.reconstruction.SAiryscanReconstruction" title="sairyscan.reconstruction.SAiryscanReconstruction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAiryscanReconstruction</span></code></a></p></td>
+<td><p>Interface for Airyscan high resolution image reconstruction method</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.IFED.html#sairyscan.reconstruction.IFED" title="sairyscan.reconstruction.IFED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IFED</span></code></a></p></td>
+<td><p>Airyscan reconstruction using the IFED method</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.ISFED.html#sairyscan.reconstruction.ISFED" title="sairyscan.reconstruction.ISFED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ISFED</span></code></a></p></td>
+<td><p>Implementation of the ISFED reconstruction method</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.ISM.html#sairyscan.reconstruction.ISM" title="sairyscan.reconstruction.ISM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ISM</span></code></a></p></td>
+<td><p>Reconstruct a high resolution image by summing the co-registered detectors: ISM method</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.PseudoConfocal.html#sairyscan.reconstruction.PseudoConfocal" title="sairyscan.reconstruction.PseudoConfocal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PseudoConfocal</span></code></a></p></td>
+<td><p>Reconstruct an image equivalent to a confocal image by summing the inner detectors</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.SpitfireJoinDeconv.html#sairyscan.reconstruction.SpitfireJoinDeconv" title="sairyscan.reconstruction.SpitfireJoinDeconv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpitfireJoinDeconv</span></code></a></p></td>
+<td><p>Gray scaled image deconvolution with the Spitfire algorithm</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.SpitfireJoinDenoise.html#sairyscan.reconstruction.SpitfireJoinDenoise" title="sairyscan.reconstruction.SpitfireJoinDenoise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpitfireJoinDenoise</span></code></a></p></td>
+<td><p>Gray scaled image deconvolution with the Spitfire algorithm</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.SSpitfireFlow.html#sairyscan.reconstruction.SSpitfireFlow" title="sairyscan.reconstruction.SSpitfireFlow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SSpitfireFlow</span></code></a></p></td>
+<td><p>Workflow for spitfire denoising</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.SureMap.html#sairyscan.reconstruction.SureMap" title="sairyscan.reconstruction.SureMap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SureMap</span></code></a></p></td>
+<td><p>Calculate the Sure weights map for IFED and ISFED</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.IFEDDenoising.html#sairyscan.reconstruction.IFEDDenoising" title="sairyscan.reconstruction.IFEDDenoising"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IFEDDenoising</span></code></a></p></td>
+<td><p>Reconstruct a high resolution image with a ISFED method including a denoising step</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.reconstruction.ISFEDDenoising.html#sairyscan.reconstruction.ISFEDDenoising" title="sairyscan.reconstruction.ISFEDDenoising"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ISFEDDenoising</span></code></a></p></td>
+<td><p>Reconstruct a high resolution image with a ISFED method including a denoising step</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="enhancing">
+<h2>Enhancing<a class="headerlink" href="#enhancing" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.enhancing.SAiryscanEnhancing.html#sairyscan.enhancing.SAiryscanEnhancing" title="sairyscan.enhancing.SAiryscanEnhancing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAiryscanEnhancing</span></code></a></p></td>
+<td><p>Interface for Airyscan enhancing filter applied after the reconstruction</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.enhancing.SAiryscanGaussian.html#sairyscan.enhancing.SAiryscanGaussian" title="sairyscan.enhancing.SAiryscanGaussian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAiryscanGaussian</span></code></a></p></td>
+<td><p>Apply a gaussian filter</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.enhancing.SAiryscanWiener.html#sairyscan.enhancing.SAiryscanWiener" title="sairyscan.enhancing.SAiryscanWiener"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAiryscanWiener</span></code></a></p></td>
+<td><p>Apply a gaussian filter</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.enhancing.SAiryscanRichardsonLucy.html#sairyscan.enhancing.SAiryscanRichardsonLucy" title="sairyscan.enhancing.SAiryscanRichardsonLucy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAiryscanRichardsonLucy</span></code></a></p></td>
+<td><p>Apply a Richardson-Lucy deconvolution</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.enhancing.SpitfireDeconv.html#sairyscan.enhancing.SpitfireDeconv" title="sairyscan.enhancing.SpitfireDeconv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpitfireDeconv</span></code></a></p></td>
+<td><p>Gray scaled image deconvolution with the Spitfire algorithm</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="example-data">
+<h2>Example data<a class="headerlink" href="#example-data" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.data.celegans.html#sairyscan.data.celegans" title="sairyscan.data.celegans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">celegans</span></code></a></p></td>
+<td><p>2D Celegans sample expressing the ERM-1::mNeonGreen fusion protein.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="internal-patterns">
+<h2>Internal patterns<a class="headerlink" href="#internal-patterns" title="Link to this heading">#</a></h2>
+<p>Internal patterns are light implementations of patterns like observer/observable,
+singleton to read settings, and interface for image file reading.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.core.SAiryscanReader.html#sairyscan.core.SAiryscanReader" title="sairyscan.core.SAiryscanReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAiryscanReader</span></code></a></p></td>
+<td><p>Read a CZI Zeiss raw data</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.core.Settings.html#sairyscan.core.Settings" title="sairyscan.core.Settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Settings</span></code></a></p></td>
+<td><p>Singleton to access the Settings container</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.core.SettingsContainer.html#sairyscan.core.SettingsContainer" title="sairyscan.core.SettingsContainer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SettingsContainer</span></code></a></p></td>
+<td><p>Container for the SAiryscan library settings</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.core.SObservable.html#sairyscan.core.SObservable" title="sairyscan.core.SObservable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SObservable</span></code></a></p></td>
+<td><p>Interface for any data processing class</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/sairyscan.core.SObserver.html#sairyscan.core.SObserver" title="sairyscan.core.SObserver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SObserver</span></code></a></p></td>
+<td><p>Interface of observer to notify progress</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/sairyscan.core.SObserverConsole.html#sairyscan.core.SObserverConsole" title="sairyscan.core.SObserverConsole"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SObserverConsole</span></code></a></p></td>
+<td><p>Implementation of an observer that print messages and progress to console</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="guide.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Guide</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="generated/sairyscan.api.SAiryscanAPI.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">sairyscan.api.SAiryscanAPI</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api">API</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#registration">Registration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reconstruction">Reconstruction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#enhancing">Enhancing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-data">Example data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-patterns">Internal patterns</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Sylvain Prigent
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Sylvain Prigent.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
