@@ -4,7 +4,7 @@ SAiryscan is a python proof of concept of the algorithms developed in the public
 in [Optic letters](https://opg.optica.org/ol/abstract.cfm?uri=ol-48-2-498&origin=search)
 
 
-![optic_letters](docs/images/optic_letters.png "optic_letters")
+![optic_letters](docs/source/images/optic_letters.png "optic_letters")
 
 The implementation is based on `PyTorch` for it capabilities of using the GPU if available.
 
