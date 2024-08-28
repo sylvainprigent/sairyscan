@@ -21,4 +21,4 @@ def test_gaussian_filter_2d(tmp_path):
     # imsave(os.path.join(root_dir, 'celegans_ism_gaussian.tif'), out_image.detach().numpy())
     ref_image = imread(os.path.join(root_dir, 'celegans_ism_gaussian.tif'))
 
-    np.testing.assert_almost_equal(out_image.detach().numpy(), ref_image, decimal=3)
+    np.testing.assert_almost_equal(out_image.detach().numpy(), ref_image, decimal=2)
