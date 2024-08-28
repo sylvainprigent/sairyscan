@@ -1,10 +1,8 @@
 import os
 import numpy as np
 from skimage.io import imread, imsave
-import torch
 
 from sairyscan.reconstruction.pseudo_confocal import PseudoConfocal
-from sairyscan.registration.position import SRegisterPosition
 from sairyscan.data import celegans
 
 

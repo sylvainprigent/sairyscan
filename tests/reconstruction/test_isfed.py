@@ -1,7 +1,6 @@
 import os
 import numpy as np
 from skimage.io import imread, imsave
-import torch
 
 from sairyscan.reconstruction.isfed import ISFED
 from sairyscan.registration.position import SRegisterPosition
