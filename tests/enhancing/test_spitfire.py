@@ -36,7 +36,7 @@ def test_spitfire_denoise_2d(tmp_path):
     filter_ = SpitfireDenoise(weight=0.6, reg=0.85)
     out_image = filter_(image)
 
-    # imsave(os.path.join(root_dir, 'celegans_ism_spitfire_denoise_2d.tif'), out_image.detach().numpy())
+    imsave(os.path.join(root_dir, 'celegans_ism_spitfire_denoise_2d.tif'), out_image.detach().numpy())
     ref_image = imread(os.path.join(root_dir, 'celegans_ism_spitfire_denoise_2d.tif'))
 
     np.testing.assert_almost_equal(out_image.detach().numpy(), ref_image, decimal=1)
