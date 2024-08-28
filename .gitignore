@@ -1,0 +1,11 @@
+build
+Doc
+CMakeLists.txt.user
+.DS_Store
+.vscode/
+.idea/
+.env/
+runs/
+saved_models/
+data/
+__pycache__
